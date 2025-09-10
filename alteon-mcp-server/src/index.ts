@@ -198,6 +198,32 @@ const tools: Tool[] = [
       required: ["ip", "username", "password"],
     },
   },
+  {
+    name: "get_port_traffic_stats",
+    description: "Get detailed port traffic statistics from the Alteon device including byte/packet counters, errors, and utilization",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        port: {
+          type: "number",
+          description: "Specific port number to retrieve stats for (optional, if not provided returns all ports)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
 ];
 
 // Handler for listing available tools
@@ -330,6 +356,103 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           });
         } else {
           formattedOutput += JSON.stringify(response.data, null, 2);
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: formattedOutput,
+            },
+          ],
+        };
+      }
+
+      case "get_port_traffic_stats": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        
+        const port = args.port as number | undefined;
+        
+        const client = createAlteonClient(connection);
+        
+        // Get port traffic statistics
+        const response = await client.get('/config/PortStatsTable');
+        
+        // Helper function to format bytes in human readable format
+        const formatBytes = (bytes: number): string => {
+          if (bytes === 0) return '0 B';
+          const k = 1024;
+          const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+          const i = Math.floor(Math.log(bytes) / Math.log(k));
+          return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+        
+        // Helper function to format packet counts
+        const formatPackets = (packets: number): string => {
+          if (packets === 0) return '0';
+          if (packets >= 1000000) return (packets / 1000000).toFixed(2) + 'M';
+          if (packets >= 1000) return (packets / 1000).toFixed(2) + 'K';
+          return packets.toString();
+        };
+        
+        // Helper function to calculate utilization percentage (rough estimate)
+        const calculateUtilization = (inOctets: number, outOctets: number): string => {
+          const totalBytes = inOctets + outOctets;
+          // Very rough calculation - would need time window for accurate percentage
+          if (totalBytes > 100000000) return 'High';
+          if (totalBytes > 10000000) return 'Medium';
+          if (totalBytes > 1000000) return 'Low';
+          return 'Very Low';
+        };
+        
+        // Format the response
+        let formattedOutput = `Port Traffic Statistics for Alteon ${connection.ip}:\n\n`;
+        
+        if (response.data.PortStatsTable) {
+          const ports = response.data.PortStatsTable;
+          
+          // Filter by specific port if requested
+          const portsToShow = port ? ports.filter((p: any) => p.Indx === port) : ports;
+          
+          if (portsToShow.length === 0) {
+            formattedOutput += port ? `No data found for port ${port}\n` : 'No port statistics available\n';
+          } else {
+            portsToShow.forEach((portData: any) => {
+              const utilization = calculateUtilization(portData.PhyIfInOctets, portData.PhyIfOutOctets);
+              
+              formattedOutput += `Port ${portData.Indx} Traffic Statistics:\n`;
+              formattedOutput += `  📊 Traffic Volume:\n`;
+              formattedOutput += `    Inbound:  ${formatBytes(portData.PhyIfInOctets)} (${formatPackets(portData.PhyIfInUcastPkts)} unicast pkts)\n`;
+              formattedOutput += `    Outbound: ${formatBytes(portData.PhyIfOutOctets)} (${formatPackets(portData.PhyIfOutUcastPkts)} unicast pkts)\n`;
+              formattedOutput += `    Utilization: ${utilization}\n`;
+              
+              formattedOutput += `  📦 Packet Breakdown:\n`;
+              formattedOutput += `    IN  - Unicast: ${formatPackets(portData.PhyIfInUcastPkts)}, Broadcast: ${formatPackets(portData.PhyIfInBroadcastPkts)}, Multicast: ${formatPackets(portData.PhyIfInMcastPkts)}\n`;
+              formattedOutput += `    OUT - Unicast: ${formatPackets(portData.PhyIfOutUcastPkts)}, Broadcast: ${formatPackets(portData.PhyIfOutBroadcastPkts)}, Multicast: ${formatPackets(portData.PhyIfOutMcastPkts)}\n`;
+              
+              formattedOutput += `  ⚠️  Errors & Discards:\n`;
+              formattedOutput += `    IN  - Errors: ${portData.PhyIfInErrors}, Discards: ${portData.PhyIfInDiscards}, Unknown Protocols: ${portData.PhyIfInUnknownProtos}\n`;
+              formattedOutput += `    OUT - Errors: ${portData.PhyIfOutErrors}, Discards: ${portData.PhyIfOutDiscards}, Queue Length: ${portData.PhyIfOutQLen}\n`;
+              
+              // Add health assessment
+              const hasErrors = portData.PhyIfInErrors > 0 || portData.PhyIfOutErrors > 0;
+              const hasDiscards = portData.PhyIfInDiscards > 0 || portData.PhyIfOutDiscards > 0;
+              const hasQueueIssues = portData.PhyIfOutQLen > 0;
+              
+              let healthStatus = '✅ Healthy';
+              if (hasErrors) healthStatus = '❌ Errors Detected';
+              else if (hasDiscards) healthStatus = '⚠️ Discards Present';
+              else if (hasQueueIssues) healthStatus = '⚠️ Queue Issues';
+              
+              formattedOutput += `  🏥 Health Status: ${healthStatus}\n\n`;
+            });
+          }
+        } else {
+          formattedOutput += 'No port statistics data available\n';
         }
         
         return {

@@ -5,6 +5,25 @@ All notable changes to the Alteon MCP Server project will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Enhanced Traffic Analytics Tool** - `get_port_traffic_stats`
+  - Human-readable byte/packet formatting (GB, MB, K, M suffixes)
+  - Comprehensive packet breakdown (unicast, broadcast, multicast)
+  - Error and discard monitoring with health status indicators
+  - Traffic utilization assessment (High/Medium/Low)
+  - Optional single-port filtering
+- Development test organization - moved all test scripts to `/tests` folder
+
+### Planned for v1.1.0
+- Real server health monitoring tools (when servers are configured)
+- Virtual service status monitoring
+- Enhanced interface analytics
+- Session table monitoring
+
+See [ROADMAP.md](ROADMAP.md) for detailed future plans.
+
 ## [1.0.0] - 2025-09-10
 
 ### Added

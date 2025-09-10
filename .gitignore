@@ -18,6 +18,7 @@ vendor-docs/
 *.html
 
 # Development files
+tests/
 test-*.mjs
 investigate.mjs
 manual-test.mjs

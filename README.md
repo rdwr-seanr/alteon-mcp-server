@@ -8,15 +8,24 @@ This project provides a simple, educational MCP server that enables AI assistant
 
 ## ✨ Features
 
-- **4 Core Tools** for Alteon interaction:
+- **5 Core Tools** for Alteon interaction:
   - `get_system_info` - Basic system information
   - `get_vlan_table` - VLAN configuration with decoded port numbers
   - `get_dns_config` - DNS client settings  
   - `get_interface_stats` - Interface status with readable formatting
+  - `get_port_traffic_stats` - **NEW!** Detailed traffic analytics with error monitoring
+
+- **Advanced Traffic Analytics**:
+  - Human-readable byte/packet formatting (GB, MB, K, M suffixes)
+  - Packet breakdown by type (unicast, broadcast, multicast)
+  - Error and discard monitoring with health assessment
+  - Traffic utilization indicators
+  - Per-port filtering capabilities
 
 - **Intelligent Data Processing**:
   - Converts hex port bitmasks to readable port numbers
   - Formats interface speeds and statuses
+  - Professional traffic statistics presentation
   - Handles authentication and SSL for lab environments
 
 - **Educational Design**:
@@ -74,6 +83,22 @@ Port 1:
   Operational Status: Up
   Description: utp ethernet (10/100/1000)
   MAC Address: 00:03:b2:80:00:40
+```
+
+### Traffic Statistics (NEW!)
+```
+Port 2 Traffic Statistics:
+  📊 Traffic Volume:
+    Inbound:  1.06 GB (18.77M unicast pkts)
+    Outbound: 2 GB (35.72M unicast pkts)
+    Utilization: High
+  📦 Packet Breakdown:
+    IN  - Unicast: 18.77M, Broadcast: 3.22K, Multicast: 150.89K
+    OUT - Unicast: 35.72M, Broadcast: 12.39K, Multicast: 0
+  ⚠️  Errors & Discards:
+    IN  - Errors: 0, Discards: 0, Unknown Protocols: 0
+    OUT - Errors: 0, Discards: 0, Queue Length: 0
+  🏥 Health Status: ✅ Healthy
 ```
 
 ## 🗂️ Project Structure
@@ -143,17 +168,25 @@ npm run build
 
 ## 📚 Documentation
 
-- [`SETUP-GUIDE.md`](SETUP-GUIDE.md) - Complete LM Studio integration
-- [`ISSUES-FIXED.md`](ISSUES-FIXED.md) - Technical problem solutions
+- [`ROADMAP.md`](ROADMAP.md) - Future development plans and feature roadmap
+- [`CHANGELOG.md`](CHANGELOG.md) - Version history and release notes
 - [`docs/alteon-34/`](docs/alteon-34/) - Alteon REST API reference
+
+## 🚀 Future Development
+
+See our comprehensive [Development Roadmap](ROADMAP.md) for planned features including:
+- **Phase 2**: Real server health monitoring, enhanced analytics
+- **Phase 3**: Safe configuration management, policy automation  
+- **Phase 4**: Multi-device clusters, AI-powered diagnostics
 
 ## 🤝 Contributing
 
-This is an educational project! Feel free to:
-- Add more Alteon API endpoints
-- Improve error handling  
-- Extend to other load balancer brands
-- Enhance data formatting
+This is an educational project that's growing into a production platform! Ways to contribute:
+- **Easy**: Add support for more Alteon models, improve error messages
+- **Medium**: Implement new monitoring tools, add configuration validation
+- **Advanced**: Design plugin architecture, build automated diagnostics
+
+Check our [roadmap](ROADMAP.md) for detailed contribution opportunities.
 
 ## ⚠️ Security Notes
 
