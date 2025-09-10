@@ -9,6 +9,21 @@ dist/
 *.tsbuildinfo
 build/
 
+# Development and Reference Documentation
+docs/
+reference/
+api-docs/
+vendor-docs/
+*.htm
+*.html
+
+# Development files
+test-*.mjs
+investigate.mjs
+manual-test.mjs
+debug-*.js
+debug-*.mjs
+
 # Environment files
 .env
 .env.local
