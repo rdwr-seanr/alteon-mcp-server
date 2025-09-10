@@ -1,24 +1,52 @@
 {
   "name": "alteon-mcp-server",
   "version": "1.0.0",
-  "description": "A simple MCP server for interacting with Alteon devices",
+  "description": "Model Context Protocol server for Alteon Application Delivery Controllers with TypeScript",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsc --watch & node --watch dist/index.js"
+    "test": "npm run build && node test.mjs",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.5.0",
-    "axios": "^1.6.0",
-    "https": "^1.0.0"
+    "axios": "^1.6.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   },
-  "keywords": ["mcp", "alteon", "rest-api", "load-balancer"],
-  "author": "Your Name",
-  "license": "MIT"
+  "keywords": [
+    "mcp", 
+    "model-context-protocol", 
+    "alteon", 
+    "load-balancer", 
+    "network-automation", 
+    "rest-api", 
+    "typescript",
+    "ai-tools"
+  ],
+  "author": "SeanR <seanramati95@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR-USERNAME/alteon-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR-USERNAME/alteon-mcp-server/issues"
+  },
+  "homepage": "https://github.com/YOUR-USERNAME/alteon-mcp-server#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ]
 }

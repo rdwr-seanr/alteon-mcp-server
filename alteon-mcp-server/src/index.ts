@@ -1,5 +1,16 @@
 #!/usr/bin/env node
 
+/**
+ * Alteon MCP Server
+ * 
+ * A Model Context Protocol server for interacting with Alteon Application Delivery Controllers.
+ * Provides AI assistants with tools to query and manage Alteon devices via REST API.
+ * 
+ * @author SeanR <seanramati95@gmail.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -7,7 +18,7 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import https from "https";
 
 // Interface for Alteon connection parameters
