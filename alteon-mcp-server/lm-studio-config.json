@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "alteon": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\SeanR\\Documents\\small-alteon-mcp\\alteon-mcp-server\\dist\\index.js"
+      ],
+      "env": {}
+    }
+  }
+}
