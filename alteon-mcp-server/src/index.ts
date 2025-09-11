@@ -21,7 +21,13 @@ import {
 import axios from "axios";
 import https from "https";
 
-// Interface for Alteon connection parameters
+// Interface for Alteon c               // Server state and status
+              const stateMap: Record<string, string> = {
+                '1': '🔴 Disabled',
+                '2': '🟢 Enabled',
+                '3': '⚪ Shutdown'
+              };       // Server state and status
+// Interface for connection parameters
 interface AlteonConnection {
   ip: string;
   username: string;
@@ -684,8 +690,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               
               // Server state and status
               const stateMap: Record<string, string> = {
-                '1': '🟢 Enabled',
-                '2': '🔴 Disabled',
+                '1': '� Disabled',
+                '2': '� Enabled',
                 '3': '⚪ Shutdown'
               };
               formattedOutput += `  🎛️ State: ${stateMap[server.State] || server.State}\n`;
