@@ -1,7 +1,7 @@
 {
   "name": "alteon-mcp-server",
-  "version": "1.0.0",
-  "description": "Model Context Protocol server for Alteon Application Delivery Controllers with TypeScript",
+  "version": "1.2.0",
+  "description": "Model Context Protocol server for Alteon Application Delivery Controllers with comprehensive virtual and real server monitoring",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {

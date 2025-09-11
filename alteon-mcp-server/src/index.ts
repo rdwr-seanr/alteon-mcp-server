@@ -7,7 +7,7 @@
  * Provides AI assistants with tools to query and manage Alteon devices via REST API.
  * 
  * @author SeanR <seanramati95@gmail.com>
- * @version 1.0.0
+ * @version 1.2.0
  * @license MIT
  */
 
@@ -89,7 +89,7 @@ const createAlteonClient = (connection: AlteonConnection) => {
 const server = new Server(
   {
     name: "alteon-mcp-server",
-    version: "1.0.0",
+    version: "1.2.0",
   },
   {
     capabilities: {
@@ -219,6 +219,58 @@ const tools: Tool[] = [
         port: {
           type: "number",
           description: "Specific port number to retrieve stats for (optional, if not provided returns all ports)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_virtual_server_status",
+    description: "Get virtual server configuration and status from the Alteon device, showing all configured virtual services with their details",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        server_index: {
+          type: "string",
+          description: "Specific virtual server index to retrieve (optional, if not provided returns all virtual servers)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_real_server_details",
+    description: "Get comprehensive real server configuration and status from the Alteon device, including health status and proxy settings",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        server_index: {
+          type: "string",
+          description: "Specific real server index to retrieve (optional, if not provided returns all real servers)",
         },
       },
       required: ["ip", "username", "password"],
@@ -453,6 +505,269 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           }
         } else {
           formattedOutput += 'No port statistics data available\n';
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: formattedOutput,
+            },
+          ],
+        };
+      }
+
+      case "get_virtual_server_status": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        
+        const serverIndex = args.server_index as string | undefined;
+        
+        const client = createAlteonClient(connection);
+        
+        // Get virtual server configuration
+        const response = await client.get('/config/SlbNewCfgEnhVirtServerTable');
+        
+        let formattedOutput = '🖥️ Virtual Server Status\n';
+        formattedOutput += '=' .repeat(50) + '\n\n';
+        
+        if (response.data && response.data.SlbNewCfgEnhVirtServerTable) {
+          const servers = response.data.SlbNewCfgEnhVirtServerTable;
+          const serverArray = Array.isArray(servers) ? servers : [servers];
+          
+          // Filter by specific server index if provided
+          const filteredServers = serverIndex 
+            ? serverArray.filter(server => server.VirtServerIndex === serverIndex)
+            : serverArray;
+          
+          if (filteredServers.length === 0) {
+            formattedOutput += serverIndex 
+              ? `No virtual server found with index: ${serverIndex}\n`
+              : 'No virtual servers configured\n';
+          } else {
+            formattedOutput += `Found ${filteredServers.length} virtual server(s)\n\n`;
+            
+            filteredServers.forEach((server, index) => {
+              formattedOutput += `📊 Virtual Server ${index + 1}:\n`;
+              formattedOutput += `  🆔 Index: ${server.VirtServerIndex}\n`;
+              formattedOutput += `  🌐 IP Address: ${server.VirtServerIpAddress}\n`;
+              formattedOutput += `  📝 Name: ${server.VirtServerVname || 'N/A'}\n`;
+              
+              // Server state and status
+              const stateMap: Record<string, string> = {
+                '1': '� Disabled',
+                '2': '� Enabled', 
+                '3': '⚪ Shutdown'
+              };
+              formattedOutput += `  🎛️ State: ${stateMap[server.VirtServerState] || server.VirtServerState}\n`;
+              
+              // Load balancing method
+              const dnameLbMethodMap: Record<string, string> = {
+                '1': 'Round Robin',
+                '2': 'Least Connections',
+                '3': 'Weighted Round Robin',
+                '4': 'Hash',
+                '5': 'Weighted Least Connections'
+              };
+              formattedOutput += `  ⚖️ LB Method: ${dnameLbMethodMap[server.VirtServerDname] || server.VirtServerDname}\n`;
+              
+              // Source NAT and address type
+              if (server.VirtServerSrcNetwork) {
+                formattedOutput += `  🌐 Source Network: ${server.VirtServerSrcNetwork}\n`;
+              }
+              if (server.VirtServerIpVer) {
+                const ipVersion = server.VirtServerIpVer === '1' ? 'IPv4' : 'IPv6';
+                formattedOutput += `  📡 IP Version: ${ipVersion}\n`;
+              }
+              
+              // Traffic management
+              if (server.VirtServerWeight !== undefined) {
+                formattedOutput += `  ⚖️ Weight: ${server.VirtServerWeight}\n`;
+              }
+              if (server.VirtServerAvail) {
+                const availMap: Record<string, string> = {
+                  '1': '✅ Available',
+                  '2': '❌ Failed',
+                  '3': '⚠️ Disabled'
+                };
+                formattedOutput += `  📈 Availability: ${availMap[server.VirtServerAvail] || server.VirtServerAvail}\n`;
+              }
+              
+              // Service ports and protocols
+              if (server.VirtServerUdpAge) {
+                formattedOutput += `  ⏱️ UDP Age Timeout: ${server.VirtServerUdpAge}s\n`;
+              }
+              if (server.VirtServerTcpAge) {
+                formattedOutput += `  ⏱️ TCP Age Timeout: ${server.VirtServerTcpAge}s\n`;
+              }
+              
+              // SSL and security
+              if (server.VirtServerCertName) {
+                formattedOutput += `  🔒 SSL Certificate: ${server.VirtServerCertName}\n`;
+              }
+              if (server.VirtServerClsRST) {
+                const rstState = server.VirtServerClsRST === '1' ? 'Enabled' : 'Disabled';
+                formattedOutput += `  🔄 Close Reset: ${rstState}\n`;
+              }
+              
+              formattedOutput += '\n';
+            });
+          }
+        } else {
+          formattedOutput += 'No virtual server data available\n';
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: formattedOutput,
+            },
+          ],
+        };
+      }
+
+      case "get_real_server_details": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        
+        const serverIndex = args.server_index as string | undefined;
+        
+        const client = createAlteonClient(connection);
+        
+        // Get both real server tables for comprehensive data
+        const [configResponse, extResponse] = await Promise.all([
+          client.get('/config/SlbNewCfgEnhRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerSecondPartTable').catch(() => ({ data: null }))
+        ]);
+        
+        let formattedOutput = '🖥️ Real Server Details\n';
+        formattedOutput += '=' .repeat(50) + '\n\n';
+        
+        if (configResponse.data && configResponse.data.SlbNewCfgEnhRealServerTable) {
+          const servers = configResponse.data.SlbNewCfgEnhRealServerTable;
+          const serverArray = Array.isArray(servers) ? servers : [servers];
+          
+          // Get extended data if available
+          let extServers = [];
+          if (extResponse.data && extResponse.data.SlbNewCfgEnhRealServerSecondPartTable) {
+            const extData = extResponse.data.SlbNewCfgEnhRealServerSecondPartTable;
+            extServers = Array.isArray(extData) ? extData : [extData];
+          }
+          
+          // Filter by specific server index if provided
+          const filteredServers = serverIndex 
+            ? serverArray.filter(server => server.Index === serverIndex)
+            : serverArray;
+          
+          if (filteredServers.length === 0) {
+            formattedOutput += serverIndex 
+              ? `No real server found with index: ${serverIndex}\n`
+              : 'No real servers configured\n';
+          } else {
+            formattedOutput += `Found ${filteredServers.length} real server(s)\n\n`;
+            
+            filteredServers.forEach((server, index) => {
+              // Find corresponding extended data
+              const extServer = extServers.find(ext => ext.Index === server.Index);
+              
+              formattedOutput += `🖥️ Real Server ${index + 1}:\n`;
+              formattedOutput += `  🆔 Index: ${server.Index}\n`;
+              formattedOutput += `  🌐 IP Address: ${server.IpAddr}\n`;
+              formattedOutput += `  📝 Name: ${server.Index}\n`;  // Using index as name for now
+              
+              // Server state and status
+              const stateMap: Record<string, string> = {
+                '1': '🟢 Enabled',
+                '2': '🔴 Disabled',
+                '3': '⚪ Shutdown'
+              };
+              formattedOutput += `  🎛️ State: ${stateMap[server.State] || server.State}\n`;
+              
+              // Health monitoring
+              if (server.Weight !== undefined) {
+                formattedOutput += `  ⚖️ Weight: ${server.Weight}\n`;
+              }
+              if (server.MaxConns !== undefined) {
+                formattedOutput += `  🔗 Max Connections: ${server.MaxConns}\n`;
+              }
+              
+              // Timeouts and thresholds
+              if (server.TimeOut !== undefined) {
+                formattedOutput += `  ⏱️ Timeout: ${server.TimeOut}s\n`;
+              }
+              if (server.FailRetry !== undefined) {
+                formattedOutput += `  🔄 Fail Retry: ${server.FailRetry}\n`;
+              }
+              if (server.SuccRetry !== undefined) {
+                formattedOutput += `  ✅ Success Retry: ${server.SuccRetry}\n`;
+              }
+              
+              // Health check configuration
+              if (server.PingInterval !== undefined) {
+                formattedOutput += `  💓 Ping Interval: ${server.PingInterval}s\n`;
+              }
+              
+              // Server type and delete status
+              const typeMap: Record<string, string> = {
+                '1': '🏠 Local Server',
+                '2': '🌐 Remote Server'
+              };
+              if (server.Type) {
+                formattedOutput += `  📍 Type: ${typeMap[server.Type] || server.Type}\n`;
+              }
+              
+              const deleteStatusMap: Record<string, string> = {
+                '1': '✅ Active',
+                '2': '�️ Marked for Deletion'
+              };
+              if (server.DeleteStatus) {
+                formattedOutput += `  �️ Status: ${deleteStatusMap[server.DeleteStatus] || server.DeleteStatus}\n`;
+              }
+              
+              // Extended data from second table if available
+              if (extServer) {
+                const availMap: Record<string, string> = {
+                  '1': '✅ Available',
+                  '2': '❌ Failed',
+                  '3': '⚠️ Disabled'
+                };
+                if (extServer.Avail) {
+                  formattedOutput += `  � Availability: ${availMap[extServer.Avail] || extServer.Avail}\n`;
+                }
+                
+                const proxyMap: Record<string, string> = {
+                  '1': '� Enabled',
+                  '2': '� Disabled'
+                };
+                if (extServer.Proxy) {
+                  formattedOutput += `  � Proxy: ${proxyMap[extServer.Proxy] || extServer.Proxy}\n`;
+                }
+                
+                const fastHealthMap: Record<string, string> = {
+                  '1': '⚡ Enabled',
+                  '2': '🐌 Disabled'
+                };
+                if (extServer.FastHealthCheck) {
+                  formattedOutput += `  🏥 Fast Health Check: ${fastHealthMap[extServer.FastHealthCheck] || extServer.FastHealthCheck}\n`;
+                }
+                
+                if (extServer.Idsvlan !== undefined) {
+                  formattedOutput += `  🛡️ IDS VLAN: ${extServer.Idsvlan}\n`;
+                }
+              }
+              
+              formattedOutput += '\n';
+            });
+          }
+        } else {
+          formattedOutput += 'No real server data available\n';
         }
         
         return {

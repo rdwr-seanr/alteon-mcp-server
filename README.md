@@ -8,17 +8,22 @@ This project provides a simple, educational MCP server that enables AI assistant
 
 ## ✨ Features
 
-- **5 Core Tools** for Alteon interaction:
+- **7 Core Tools** for comprehensive Alteon management:
   - `get_system_info` - Basic system information
   - `get_vlan_table` - VLAN configuration with decoded port numbers
   - `get_dns_config` - DNS client settings  
   - `get_interface_stats` - Interface status with readable formatting
-  - `get_port_traffic_stats` - **NEW!** Detailed traffic analytics with error monitoring
+  - `get_port_traffic_stats` - Detailed traffic analytics with error monitoring
+  - `get_virtual_server_status` - **NEW!** Virtual server monitoring and configuration
+  - `get_real_server_details` - **NEW!** Real server health and management
 
-- **Advanced Traffic Analytics**:
+- **Advanced Monitoring Features**:
   - Human-readable byte/packet formatting (GB, MB, K, M suffixes)
   - Packet breakdown by type (unicast, broadcast, multicast)
   - Error and discard monitoring with health assessment
+  - Virtual server state and availability tracking
+  - Real server health check configuration
+  - Comprehensive server discovery and filtering
   - Traffic utilization indicators
   - Per-port filtering capabilities
 

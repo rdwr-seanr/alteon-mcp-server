@@ -5,15 +5,37 @@ All notable changes to the Alteon MCP Server project will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2025-09-11
 
 ### Added
+- **Virtual Server Monitoring Tool** - `get_virtual_server_status`
+  - Comprehensive virtual server discovery (18 servers found on test device)
+  - State monitoring with correct "Enabled/Disabled" interpretation
+  - Load balancing method identification
+  - IP version and network configuration details
+  - Optional server-specific filtering by index
+- **Real Server Management Tool** - `get_real_server_details`
+  - Complete real server configuration retrieval
+  - Health check settings and timeout configuration
+  - Proxy and backend service settings
+  - Extended server properties from multiple API tables
+  - Server availability and operational status
+
+### Fixed
+- **Critical State Mapping Issue**: Corrected virtual server state interpretation
+  - State value "2" now correctly displays as "🟢 Enabled" (was showing "🔴 Disabled")
+  - Matches actual Alteon GUI status display
+  - All 18 virtual servers now show correct "Enabled" status
+
+### Enhanced
 - **Enhanced Traffic Analytics Tool** - `get_port_traffic_stats`
   - Human-readable byte/packet formatting (GB, MB, K, M suffixes)
   - Comprehensive packet breakdown (unicast, broadcast, multicast)
   - Error and discard monitoring with health status indicators
   - Traffic utilization assessment (High/Medium/Low)
   - Optional single-port filtering
+
+## [Unreleased]
 - Development test organization - moved all test scripts to `/tests` folder
 
 ### Planned for v1.1.0
