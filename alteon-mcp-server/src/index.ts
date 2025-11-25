@@ -7,7 +7,7 @@
  * Provides AI assistants with tools to query and manage Alteon devices via REST API.
  * 
  * @author SeanR <seanramati95@gmail.com>
- * @version 1.2.0
+ * @version 1.6.0
  * @license MIT
  */
 
@@ -95,7 +95,7 @@ const createAlteonClient = (connection: AlteonConnection) => {
 const server = new Server(
   {
     name: "alteon-mcp-server",
-    version: "1.2.0",
+    version: "1.6.0",
   },
   {
     capabilities: {
@@ -277,6 +277,276 @@ const tools: Tool[] = [
         server_index: {
           type: "string",
           description: "Specific real server index to retrieve (optional, if not provided returns all real servers)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_real_server_runtime_stats",
+    description: "Get real-time runtime statistics and performance metrics for real servers, including availability status, health check configuration, and operational state",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        server_index: {
+          type: "string",
+          description: "Specific real server index to retrieve (optional, if not provided returns all real servers)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_service_groups",
+    description: "Get all configured service groups (real server pools) from the Alteon device, including member servers, load balancing configuration, and health check settings",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        group_index: {
+          type: "string",
+          description: "Specific service group index/name to retrieve (optional, if not provided returns all groups)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_service_group_details",
+    description: "Get detailed information about a specific service group including all member servers, their states, health check configuration, and load balancing settings",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        group_index: {
+          type: "string",
+          description: "Service group index/name to retrieve details for (required)",
+        },
+      },
+      required: ["ip", "username", "password", "group_index"],
+    },
+  },
+  {
+    name: "get_ip_interfaces",
+    description: "Get Layer 3 IP interface configuration including IP addresses, subnet masks, VLAN associations, and interface descriptions. Shows the network topology and Layer 3 connectivity.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        interface_index: {
+          type: "string",
+          description: "Specific interface index to retrieve (optional, if not provided returns all interfaces)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_vlan_details",
+    description: "Get comprehensive VLAN information including enhanced VLAN configuration, port assignments, MTU, learning settings, and IPv6 configuration. More detailed than get_vlan_table.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        vlan_id: {
+          type: "string",
+          description: "Specific VLAN ID to retrieve (optional, if not provided returns all VLANs)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_network_summary",
+    description: "Get a comprehensive network summary combining IP interfaces, VLANs, and their relationships. Provides a complete network topology view showing how Layer 2 and Layer 3 are configured.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_gateway_config",
+    description: "Get gateway and static route configuration. Shows configured gateways and static routes for network routing topology.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "check_config_sync",
+    description: "Check configuration synchronization status between new (pending) and current (active) configurations. Identifies any uncommitted changes that haven't been applied or saved.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "validate_server_config",
+    description: "Validate real server configuration for common issues: duplicate IPs, port conflicts, invalid health check settings, weight misconfigurations, and best practice violations.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        server_index: {
+          type: "string",
+          description: "Specific server index to validate (optional, validates all if not provided)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "validate_service_group",
+    description: "Validate service group configuration for issues: empty groups, all members down, mismatched health checks, unbalanced weights, and configuration problems.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        group_index: {
+          type: "string",
+          description: "Specific service group to validate (optional, validates all if not provided)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "generate_config_report",
+    description: "Generate a comprehensive configuration audit report including device summary, resource utilization, configuration health, potential issues, and recommendations.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
         },
       },
       required: ["ip", "username", "password"],
@@ -544,19 +814,23 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           const servers = response.data.SlbNewCfgEnhVirtServerTable;
           const serverArray = Array.isArray(servers) ? servers : [servers];
           
-          // Filter by specific server index if provided
-          const filteredServers = serverIndex 
-            ? serverArray.filter(server => server.VirtServerIndex === serverIndex)
-            : serverArray;
-          
-          if (filteredServers.length === 0) {
-            formattedOutput += serverIndex 
-              ? `No virtual server found with index: ${serverIndex}\n`
-              : 'No virtual servers configured\n';
+          // Check if array is empty or contains empty objects
+          if (serverArray.length === 0 || (serverArray.length === 1 && Object.keys(serverArray[0]).length === 0)) {
+            formattedOutput += 'No virtual servers configured\n';
           } else {
-            formattedOutput += `Found ${filteredServers.length} virtual server(s)\n\n`;
+            // Filter by specific server index if provided
+            const filteredServers = serverIndex 
+              ? serverArray.filter(server => server.VirtServerIndex === serverIndex)
+              : serverArray;
             
-            filteredServers.forEach((server, index) => {
+            if (filteredServers.length === 0) {
+              formattedOutput += serverIndex 
+                ? `No virtual server found with index: ${serverIndex}\n`
+                : 'No virtual servers configured\n';
+            } else {
+              formattedOutput += `Found ${filteredServers.length} virtual server(s)\n\n`;
+              
+              filteredServers.forEach((server, index) => {
               formattedOutput += `📊 Virtual Server ${index + 1}:\n`;
               formattedOutput += `  🆔 Index: ${server.VirtServerIndex}\n`;
               formattedOutput += `  🌐 IP Address: ${server.VirtServerIpAddress}\n`;
@@ -621,6 +895,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               
               formattedOutput += '\n';
             });
+            }
           }
         } else {
           formattedOutput += 'No virtual server data available\n';
@@ -783,6 +1058,1526 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               text: formattedOutput,
             },
           ],
+        };
+      }
+
+      case "get_real_server_runtime_stats": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        
+        const serverIndex = args.server_index as string | undefined;
+        
+        const client = createAlteonClient(connection);
+        
+        // Get comprehensive data from multiple tables
+        const [configResponse, currentResponse, extResponse] = await Promise.all([
+          client.get('/config/SlbNewCfgEnhRealServerTable'),
+          client.get('/config/SlbCurCfgEnhRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerSecondPartTable').catch(() => ({ data: null }))
+        ]);
+        
+        let formattedOutput = '📊 Real Server Runtime Statistics\n';
+        formattedOutput += '=' .repeat(70) + '\n\n';
+        
+        if (configResponse.data && configResponse.data.SlbNewCfgEnhRealServerTable) {
+          const servers = configResponse.data.SlbNewCfgEnhRealServerTable;
+          const serverArray = Array.isArray(servers) ? servers : [servers];
+          
+          // Get current running config
+          let currentServers = [];
+          if (currentResponse.data && currentResponse.data.SlbCurCfgEnhRealServerTable) {
+            const currentData = currentResponse.data.SlbCurCfgEnhRealServerTable;
+            currentServers = Array.isArray(currentData) ? currentData : [currentData];
+          }
+          
+          // Get extended data
+          let extServers = [];
+          if (extResponse.data && extResponse.data.SlbNewCfgEnhRealServerSecondPartTable) {
+            const extData = extResponse.data.SlbNewCfgEnhRealServerSecondPartTable;
+            extServers = Array.isArray(extData) ? extData : [extData];
+          }
+          
+          // Filter by specific server index if provided
+          const filteredServers = serverIndex 
+            ? serverArray.filter(server => server.Index === serverIndex)
+            : serverArray;
+          
+          if (filteredServers.length === 0) {
+            formattedOutput += serverIndex 
+              ? `No real server found with index: ${serverIndex}\n`
+              : 'No real servers configured\n';
+          } else {
+            formattedOutput += `📈 Monitoring ${filteredServers.length} real server(s)\n`;
+            formattedOutput += `⏰ Timestamp: ${new Date().toISOString()}\n\n`;
+            
+            filteredServers.forEach((server, index) => {
+              // Find corresponding current and extended data
+              const currentServer = currentServers.find(cs => cs.Index === server.Index);
+              const extServer = extServers.find(ext => ext.Index === server.Index);
+              
+              formattedOutput += `${'='.repeat(70)}\n`;
+              formattedOutput += `🖥️  Real Server ${index + 1} (Index: ${server.Index})\n`;
+              formattedOutput += `${'='.repeat(70)}\n\n`;
+              
+              // Basic Information
+              formattedOutput += `📍 BASIC INFORMATION:\n`;
+              formattedOutput += `   IP Address: ${server.IpAddr}\n`;
+              formattedOutput += `   IP Version: ${server.IpVer === 1 ? 'IPv4' : 'IPv6'}\n`;
+              if (server.Name && server.Name.trim()) {
+                formattedOutput += `   Name: ${server.Name}\n`;
+              }
+              
+              // Operational State
+              formattedOutput += `\n🎛️  OPERATIONAL STATE:\n`;
+              const stateMap: Record<string, string> = {
+                '1': '🔴 Disabled',
+                '2': '🟢 Enabled',
+                '3': '⚪ Shutdown'
+              };
+              formattedOutput += `   Admin State: ${stateMap[server.State] || server.State}\n`;
+              
+              // Availability Status (from extended table)
+              if (extServer && extServer.Avail) {
+                const availMap: Record<string, string> = {
+                  '1': '✅ Available (Healthy)',
+                  '2': '❌ Failed (Unhealthy)',
+                  '3': '⚠️  Administratively Disabled'
+                };
+                formattedOutput += `   Health Status: ${availMap[extServer.Avail] || extServer.Avail}\n`;
+              }
+              
+              const deleteStatusMap: Record<string, string> = {
+                '1': '✅ Active',
+                '2': '🗑️  Pending Deletion'
+              };
+              formattedOutput += `   Delete Status: ${deleteStatusMap[server.DeleteStatus] || server.DeleteStatus}\n`;
+              
+              // Load Balancing Configuration
+              formattedOutput += `\n⚖️  LOAD BALANCING:\n`;
+              formattedOutput += `   Weight: ${server.Weight}\n`;
+              formattedOutput += `   Max Connections: ${server.MaxConns === 0 ? 'Unlimited' : server.MaxConns}\n`;
+              
+              const typeMap: Record<string, string> = {
+                '1': 'Local Server',
+                '2': 'Remote Server'
+              };
+              formattedOutput += `   Server Type: ${typeMap[server.Type] || server.Type}\n`;
+              
+              // Health Check Configuration
+              formattedOutput += `\n🏥 HEALTH CHECK CONFIGURATION:\n`;
+              formattedOutput += `   Timeout: ${server.TimeOut}s\n`;
+              formattedOutput += `   Ping Interval: ${server.PingInterval === 0 ? 'Disabled' : server.PingInterval + 's'}\n`;
+              formattedOutput += `   Failure Retry: ${server.FailRetry === 0 ? 'Default' : server.FailRetry}\n`;
+              formattedOutput += `   Success Retry: ${server.SuccRetry === 0 ? 'Default' : server.SuccRetry}\n`;
+              
+              if (extServer) {
+                const fastHealthMap: Record<string, string> = {
+                  '1': '⚡ Enabled',
+                  '2': '🐌 Disabled'
+                };
+                if (extServer.FastHealthCheck) {
+                  formattedOutput += `   Fast Health Check: ${fastHealthMap[extServer.FastHealthCheck] || extServer.FastHealthCheck}\n`;
+                }
+              }
+              
+              // Advanced Configuration
+              if (extServer) {
+                formattedOutput += `\n🔧 ADVANCED CONFIGURATION:\n`;
+                
+                const proxyMap: Record<string, string> = {
+                  '1': '🔀 Enabled',
+                  '2': '➡️  Disabled'
+                };
+                formattedOutput += `   Proxy Mode: ${proxyMap[extServer.Proxy] || extServer.Proxy}\n`;
+                
+                if (extServer.ProxyIpAddr && extServer.ProxyIpAddr !== '0.0.0.0') {
+                  formattedOutput += `   Proxy IP: ${extServer.ProxyIpAddr}\n`;
+                  formattedOutput += `   Proxy Mask: ${extServer.ProxyIpMask}\n`;
+                }
+                
+                const modeMap: Record<string, string> = {
+                  '1': 'NAT',
+                  '2': 'Transparent',
+                  '3': 'DSR'
+                };
+                if (extServer.Mode) {
+                  formattedOutput += `   Forwarding Mode: ${modeMap[extServer.Mode] || extServer.Mode}\n`;
+                }
+                
+                if (extServer.Idsvlan && extServer.Idsvlan !== 0) {
+                  formattedOutput += `   IDS VLAN: ${extServer.Idsvlan}\n`;
+                }
+                
+                if (extServer.Ingvlan && extServer.Ingvlan !== 0) {
+                  formattedOutput += `   Ingress VLAN: ${extServer.Ingvlan}\n`;
+                }
+              }
+              
+              // Session Persistence
+              if (server.Cookie) {
+                formattedOutput += `\n🍪 SESSION PERSISTENCE:\n`;
+                const cookieMap: Record<string, string> = {
+                  '1': '✅ Enabled',
+                  '2': '❌ Disabled'
+                };
+                formattedOutput += `   Cookie: ${cookieMap[server.Cookie] || server.Cookie}\n`;
+              }
+              
+              // Configuration Sync Status
+              formattedOutput += `\n🔄 CONFIGURATION STATUS:\n`;
+              const configMatch = currentServer && 
+                currentServer.IpAddr === server.IpAddr &&
+                currentServer.State === server.State &&
+                currentServer.Weight === server.Weight;
+              
+              formattedOutput += `   Config Synced: ${configMatch ? '✅ Yes' : '⚠️  Pending Apply'}\n`;
+              
+              if (currentServer && !configMatch) {
+                formattedOutput += `   ⚠️  Configuration changes detected - apply pending\n`;
+              }
+              
+              formattedOutput += '\n';
+            });
+            
+            // Summary
+            formattedOutput += `${'='.repeat(70)}\n`;
+            formattedOutput += `📊 SUMMARY\n`;
+            formattedOutput += `${'='.repeat(70)}\n`;
+            
+            const enabledCount = filteredServers.filter(s => s.State === 2).length;
+            const disabledCount = filteredServers.filter(s => s.State === 1).length;
+            
+            let healthyCount = 0;
+            let unhealthyCount = 0;
+            filteredServers.forEach(s => {
+              const extServer = extServers.find(ext => ext.Index === s.Index);
+              if (extServer) {
+                if (extServer.Avail === 1) healthyCount++;
+                else if (extServer.Avail === 2) unhealthyCount++;
+              }
+            });
+            
+            formattedOutput += `\nTotal Servers: ${filteredServers.length}\n`;
+            formattedOutput += `Admin State: ${enabledCount} Enabled, ${disabledCount} Disabled\n`;
+            if (healthyCount + unhealthyCount > 0) {
+              formattedOutput += `Health Status: ${healthyCount} Healthy, ${unhealthyCount} Unhealthy\n`;
+            }
+            
+            // Overall health assessment
+            if (unhealthyCount > 0) {
+              formattedOutput += `\n⚠️  ALERT: ${unhealthyCount} server(s) reporting unhealthy status!\n`;
+            } else if (enabledCount === filteredServers.length && healthyCount === filteredServers.length) {
+              formattedOutput += `\n✅ All monitored servers are enabled and healthy\n`;
+            }
+          }
+        } else {
+          formattedOutput += 'No real server data available\n';
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: formattedOutput,
+            },
+          ],
+        };
+      }
+
+      case "get_service_groups": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        
+        const groupIndex = args.group_index as string | undefined;
+        
+        const client = createAlteonClient(connection);
+        
+        // Get service group data and member servers
+        const [groupsResponse, currentGroupsResponse, memberServersResponse, realServersResponse] = await Promise.all([
+          client.get('/config/SlbNewCfgEnhGroupTable'),
+          client.get('/config/SlbCurCfgEnhGroupTable'),
+          client.get('/config/SlbNewCfgEnhGroupRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerTable')
+        ]);
+        
+        let formattedOutput = '🔄 Service Groups Overview\n';
+        formattedOutput += '=' .repeat(70) + '\n\n';
+        
+        if (groupsResponse.data && groupsResponse.data.SlbNewCfgEnhGroupTable) {
+          const groups = groupsResponse.data.SlbNewCfgEnhGroupTable;
+          const groupArray = Array.isArray(groups) ? groups : [groups];
+          
+          // Get current groups
+          let currentGroups = [];
+          if (currentGroupsResponse.data && currentGroupsResponse.data.SlbCurCfgEnhGroupTable) {
+            const currentData = currentGroupsResponse.data.SlbCurCfgEnhGroupTable;
+            currentGroups = Array.isArray(currentData) ? currentData : [currentData];
+          }
+          
+          // Get member servers
+          let memberServers = [];
+          if (memberServersResponse.data && memberServersResponse.data.SlbNewCfgEnhGroupRealServerTable) {
+            const memberData = memberServersResponse.data.SlbNewCfgEnhGroupRealServerTable;
+            memberServers = Array.isArray(memberData) ? memberData : [memberData];
+          }
+          
+          // Get real server details
+          let realServers = [];
+          if (realServersResponse.data && realServersResponse.data.SlbNewCfgEnhRealServerTable) {
+            const rsData = realServersResponse.data.SlbNewCfgEnhRealServerTable;
+            realServers = Array.isArray(rsData) ? rsData : [rsData];
+          }
+          
+          // Filter by specific group if provided
+          const filteredGroups = groupIndex 
+            ? groupArray.filter(group => group.Index === groupIndex)
+            : groupArray;
+          
+          if (filteredGroups.length === 0) {
+            formattedOutput += groupIndex 
+              ? `No service group found with index: ${groupIndex}\n`
+              : 'No service groups configured\n';
+          } else {
+            formattedOutput += `📊 Found ${filteredGroups.length} service group(s)\n`;
+            formattedOutput += `⏰ Timestamp: ${new Date().toISOString()}\n\n`;
+            
+            filteredGroups.forEach((group, index) => {
+              formattedOutput += `${'='.repeat(70)}\n`;
+              formattedOutput += `📦 Service Group ${index + 1}: ${group.Index}\n`;
+              formattedOutput += `${'='.repeat(70)}\n\n`;
+              
+              // Basic Information
+              formattedOutput += `📍 BASIC INFORMATION:\n`;
+              formattedOutput += `   Group Index: ${group.Index}\n`;
+              if (group.Name && group.Name.trim()) {
+                formattedOutput += `   Group Name: ${group.Name}\n`;
+              }
+              
+              // Group Type
+              const typeMap: Record<string, string> = {
+                '0': 'Default',
+                '1': 'Service Group',
+                '2': 'Router Group'
+              };
+              formattedOutput += `   Type: ${typeMap[group.Type] || group.Type}\n`;
+              
+              // Load Balancing Configuration
+              formattedOutput += `\n⚖️  LOAD BALANCING:\n`;
+              const metricMap: Record<string, string> = {
+                '1': 'Round Robin',
+                '2': 'Least Connections',
+                '3': 'Min Misses',
+                '4': 'Hash',
+                '5': 'Response Time',
+                '6': 'Bandwidth',
+                '7': 'Phash'
+              };
+              formattedOutput += `   Metric: ${metricMap[group.Metric] || group.Metric}\n`;
+              
+              const rmetricMap: Record<string, string> = {
+                '1': 'Round Robin',
+                '2': 'Hash'
+              };
+              formattedOutput += `   Reverse Metric: ${rmetricMap[group.Rmetric] || group.Rmetric}\n`;
+              
+              // Health Check Configuration
+              formattedOutput += `\n🏥 HEALTH CHECK:\n`;
+              formattedOutput += `   Health Check ID: ${group.HealthID}\n`;
+              
+              const healthLayerMap: Record<string, string> = {
+                '1': 'ICMP (Layer 3)',
+                '2': 'TCP (Layer 4)',
+                '3': 'HTTP (Layer 7)',
+                '4': 'HTTPS'
+              };
+              formattedOutput += `   Health Check Layer: ${healthLayerMap[group.HealthCheckLayer] || group.HealthCheckLayer}\n`;
+              
+              if (group.HealthCheckUrl && group.HealthCheckUrl.trim()) {
+                formattedOutput += `   Health Check URL: ${group.HealthCheckUrl}\n`;
+              }
+              
+              const vipHealthMap: Record<string, string> = {
+                '1': '🔴 Disabled',
+                '2': '🟢 Enabled'
+              };
+              formattedOutput += `   VIP Health Check: ${vipHealthMap[group.VipHealthCheck] || group.VipHealthCheck}\n`;
+              
+              // Thresholds
+              formattedOutput += `\n📊 THRESHOLDS:\n`;
+              formattedOutput += `   Real Server Threshold: ${group.RealThreshold === 0 ? 'Not Set' : group.RealThreshold}\n`;
+              formattedOutput += `   Min Threshold: ${group.MinThreshold}\n`;
+              formattedOutput += `   Max Threshold: ${group.MaxThreshold}\n`;
+              
+              // Backup Configuration
+              formattedOutput += `\n🔄 BACKUP CONFIGURATION:\n`;
+              formattedOutput += `   Backup Type: ${group.Backup}\n`;
+              if (group.BackupServer) {
+                formattedOutput += `   Backup Server: ${group.BackupServer}\n`;
+              }
+              if (group.BackupGroup) {
+                formattedOutput += `   Backup Group: ${group.BackupGroup}\n`;
+              }
+              if (group.SecBackupGroup) {
+                formattedOutput += `   Secondary Backup Group: ${group.SecBackupGroup}\n`;
+              }
+              
+              // Slow Start
+              if (group.Slowstart > 0) {
+                formattedOutput += `\n⏱️  SLOW START:\n`;
+                formattedOutput += `   Enabled: ${group.Slowstart}s\n`;
+              }
+              
+              // Member Servers
+              const groupMembers = memberServers.filter(m => m.RealServGroupIndex === group.Index);
+              formattedOutput += `\n👥 MEMBER SERVERS (${groupMembers.length}):\n`;
+              
+              if (groupMembers.length > 0) {
+                groupMembers.forEach(member => {
+                  const realServer = realServers.find(rs => rs.Index === member.ServIndex);
+                  const stateMap: Record<string, string> = {
+                    '1': '🔴 Disabled',
+                    '2': '🟢 Enabled'
+                  };
+                  
+                  if (realServer) {
+                    formattedOutput += `   • Server ${member.ServIndex}: ${realServer.IpAddr} - ${stateMap[member.State] || member.State}\n`;
+                  } else {
+                    formattedOutput += `   • Server ${member.ServIndex}: ${stateMap[member.State] || member.State}\n`;
+                  }
+                });
+              } else {
+                formattedOutput += `   No member servers configured\n`;
+              }
+              
+              // Configuration Sync Status
+              const currentGroup = currentGroups.find(cg => cg.Index === group.Index);
+              formattedOutput += `\n🔄 CONFIGURATION STATUS:\n`;
+              const configMatch = currentGroup && 
+                currentGroup.Metric === group.Metric &&
+                currentGroup.HealthID === group.HealthID;
+              
+              formattedOutput += `   Config Synced: ${configMatch ? '✅ Yes' : '⚠️  Pending Apply'}\n`;
+              
+              formattedOutput += '\n';
+            });
+            
+            // Summary
+            formattedOutput += `${'='.repeat(70)}\n`;
+            formattedOutput += `📊 SUMMARY\n`;
+            formattedOutput += `${'='.repeat(70)}\n\n`;
+            
+            const totalGroups = filteredGroups.length;
+            const totalMembers = memberServers.filter(m => 
+              filteredGroups.some(g => g.Index === m.RealServGroupIndex)
+            ).length;
+            const activeMembers = memberServers.filter(m => 
+              filteredGroups.some(g => g.Index === m.RealServGroupIndex) && m.State === 2
+            ).length;
+            
+            formattedOutput += `Total Service Groups: ${totalGroups}\n`;
+            formattedOutput += `Total Member Servers: ${totalMembers}\n`;
+            formattedOutput += `Active Member Servers: ${activeMembers}\n`;
+            formattedOutput += `Inactive Member Servers: ${totalMembers - activeMembers}\n`;
+          }
+        } else {
+          formattedOutput += 'No service group data available\n';
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: formattedOutput,
+            },
+          ],
+        };
+      }
+
+      case "get_service_group_details": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        
+        const groupIndex = args.group_index as string;
+        
+        if (!groupIndex) {
+          throw new Error("group_index is required for get_service_group_details");
+        }
+        
+        const client = createAlteonClient(connection);
+        
+        // Get comprehensive data for the specific group
+        const [groupResponse, currentGroupResponse, memberServersResponse, currentMembersResponse, 
+               realServersResponse, extRealServersResponse] = await Promise.all([
+          client.get(`/config/SlbNewCfgEnhGroupTable`),
+          client.get(`/config/SlbCurCfgEnhGroupTable`),
+          client.get('/config/SlbNewCfgEnhGroupRealServerTable'),
+          client.get('/config/SlbCurCfgEnhGroupRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerSecondPartTable').catch(() => ({ data: null }))
+        ]);
+        
+        let formattedOutput = '🔍 Service Group Detailed Analysis\n';
+        formattedOutput += '=' .repeat(70) + '\n\n';
+        
+        if (groupResponse.data && groupResponse.data.SlbNewCfgEnhGroupTable) {
+          const groups = groupResponse.data.SlbNewCfgEnhGroupTable;
+          const groupArray = Array.isArray(groups) ? groups : [groups];
+          const group = groupArray.find(g => g.Index === groupIndex);
+          
+          if (!group) {
+            formattedOutput += `Service group '${groupIndex}' not found\n`;
+          } else {
+            // Get current group config
+            let currentGroup = null;
+            if (currentGroupResponse.data && currentGroupResponse.data.SlbCurCfgEnhGroupTable) {
+              const currentData = currentGroupResponse.data.SlbCurCfgEnhGroupTable;
+              const currentArray = Array.isArray(currentData) ? currentData : [currentData];
+              currentGroup = currentArray.find(g => g.Index === groupIndex);
+            }
+            
+            // Get member servers
+            let memberServers = [];
+            if (memberServersResponse.data && memberServersResponse.data.SlbNewCfgEnhGroupRealServerTable) {
+              const memberData = memberServersResponse.data.SlbNewCfgEnhGroupRealServerTable;
+              const memberArray = Array.isArray(memberData) ? memberData : [memberData];
+              memberServers = memberArray.filter(m => m.RealServGroupIndex === groupIndex);
+            }
+            
+            // Get current member servers
+            let currentMembers = [];
+            if (currentMembersResponse.data && currentMembersResponse.data.SlbCurCfgEnhGroupRealServerTable) {
+              const currentData = currentMembersResponse.data.SlbCurCfgEnhGroupRealServerTable;
+              const currentArray = Array.isArray(currentData) ? currentData : [currentData];
+              currentMembers = currentArray.filter(m => m.RealServGroupIndex === groupIndex);
+            }
+            
+            // Get real server details
+            let realServers = [];
+            if (realServersResponse.data && realServersResponse.data.SlbNewCfgEnhRealServerTable) {
+              const rsData = realServersResponse.data.SlbNewCfgEnhRealServerTable;
+              realServers = Array.isArray(rsData) ? rsData : [rsData];
+            }
+            
+            // Get extended real server data
+            let extRealServers = [];
+            if (extRealServersResponse.data && extRealServersResponse.data.SlbNewCfgEnhRealServerSecondPartTable) {
+              const extData = extRealServersResponse.data.SlbNewCfgEnhRealServerSecondPartTable;
+              extRealServers = Array.isArray(extData) ? extData : [extData];
+            }
+            
+            formattedOutput += `🎯 Service Group: ${group.Index}\n`;
+            formattedOutput += `⏰ Timestamp: ${new Date().toISOString()}\n\n`;
+            
+            // GROUP CONFIGURATION
+            formattedOutput += `${'='.repeat(70)}\n`;
+            formattedOutput += `📦 GROUP CONFIGURATION\n`;
+            formattedOutput += `${'='.repeat(70)}\n\n`;
+            
+            formattedOutput += `Index: ${group.Index}\n`;
+            if (group.Name && group.Name.trim()) {
+              formattedOutput += `Name: ${group.Name}\n`;
+            }
+            
+            const typeMap: Record<string, string> = {
+              '0': 'Default',
+              '1': 'Service Group',
+              '2': 'Router Group'
+            };
+            formattedOutput += `Type: ${typeMap[group.Type] || group.Type}\n`;
+            
+            // Load Balancing
+            formattedOutput += `\n⚖️  Load Balancing Method:\n`;
+            const metricMap: Record<string, string> = {
+              '1': 'Round Robin',
+              '2': 'Least Connections',
+              '3': 'Min Misses',
+              '4': 'Hash',
+              '5': 'Response Time',
+              '6': 'Bandwidth',
+              '7': 'Phash'
+            };
+            formattedOutput += `   Primary: ${metricMap[group.Metric] || group.Metric}\n`;
+            
+            const rmetricMap: Record<string, string> = {
+              '1': 'Round Robin',
+              '2': 'Hash'
+            };
+            formattedOutput += `   Reverse: ${rmetricMap[group.Rmetric] || group.Rmetric}\n`;
+            
+            if (group.PhashMask && group.PhashMask !== '255.255.255.255') {
+              formattedOutput += `   Phash Mask: ${group.PhashMask}\n`;
+            }
+            
+            // Health Check Details
+            formattedOutput += `\n🏥 Health Check Configuration:\n`;
+            formattedOutput += `   Health Check ID: ${group.HealthID}\n`;
+            
+            const healthLayerMap: Record<string, string> = {
+              '1': 'ICMP (Ping)',
+              '2': 'TCP (Port Check)',
+              '3': 'HTTP',
+              '4': 'HTTPS'
+            };
+            formattedOutput += `   Layer: ${healthLayerMap[group.HealthCheckLayer] || group.HealthCheckLayer}\n`;
+            
+            if (group.HealthCheckUrl && group.HealthCheckUrl.trim()) {
+              formattedOutput += `   URL: ${group.HealthCheckUrl}\n`;
+            }
+            
+            if (group.HealthCheckFormula && group.HealthCheckFormula.trim()) {
+              formattedOutput += `   Formula: ${group.HealthCheckFormula}\n`;
+            }
+            
+            const vipHealthMap: Record<string, string> = {
+              '1': '🔴 Disabled',
+              '2': '🟢 Enabled'
+            };
+            formattedOutput += `   VIP Health Check: ${vipHealthMap[group.VipHealthCheck] || group.VipHealthCheck}\n`;
+            
+            // Thresholds and Limits
+            formattedOutput += `\n📊 Thresholds:\n`;
+            formattedOutput += `   Real Server Threshold: ${group.RealThreshold === 0 ? 'Not Set' : group.RealThreshold}\n`;
+            formattedOutput += `   Min Threshold: ${group.MinThreshold}\n`;
+            formattedOutput += `   Max Threshold: ${group.MaxThreshold}\n`;
+            
+            // Backup Configuration
+            if (group.BackupServer || group.BackupGroup || group.SecBackupGroup) {
+              formattedOutput += `\n🔄 Backup Configuration:\n`;
+              formattedOutput += `   Type: ${group.Backup}\n`;
+              if (group.BackupServer) {
+                formattedOutput += `   Backup Server: ${group.BackupServer}\n`;
+              }
+              if (group.BackupGroup) {
+                formattedOutput += `   Backup Group: ${group.BackupGroup}\n`;
+              }
+              if (group.SecBackupGroup) {
+                formattedOutput += `   Secondary Backup Group: ${group.SecBackupGroup}\n`;
+              }
+            }
+            
+            // Slow Start
+            if (group.Slowstart > 0) {
+              formattedOutput += `\n⏱️  Slow Start: ${group.Slowstart} seconds\n`;
+            }
+            
+            // MEMBER SERVERS
+            formattedOutput += `\n${'='.repeat(70)}\n`;
+            formattedOutput += `👥 MEMBER SERVERS (${memberServers.length})\n`;
+            formattedOutput += `${'='.repeat(70)}\n\n`;
+            
+            if (memberServers.length > 0) {
+              memberServers.forEach((member, idx) => {
+                const realServer = realServers.find(rs => rs.Index === member.ServIndex);
+                const extServer = extRealServers.find(ext => ext.Index === member.ServIndex);
+                const currentMember = currentMembers.find(cm => cm.ServIndex === member.ServIndex);
+                
+                formattedOutput += `Server ${idx + 1}:\n`;
+                formattedOutput += `   Index: ${member.ServIndex}\n`;
+                
+                if (realServer) {
+                  formattedOutput += `   IP Address: ${realServer.IpAddr}\n`;
+                  formattedOutput += `   Weight: ${realServer.Weight}\n`;
+                  formattedOutput += `   Max Connections: ${realServer.MaxConns === 0 ? 'Unlimited' : realServer.MaxConns}\n`;
+                  
+                  const stateMap: Record<string, string> = {
+                    '1': '🔴 Disabled',
+                    '2': '🟢 Enabled'
+                  };
+                  formattedOutput += `   Admin State: ${stateMap[realServer.State] || realServer.State}\n`;
+                  formattedOutput += `   Group Membership State: ${stateMap[member.State] || member.State}\n`;
+                  
+                  // Health check config
+                  formattedOutput += `   Health Check Timeout: ${realServer.TimeOut}s\n`;
+                  formattedOutput += `   Ping Interval: ${realServer.PingInterval === 0 ? 'Group Default' : realServer.PingInterval + 's'}\n`;
+                  
+                  if (extServer) {
+                    const availMap: Record<string, string> = {
+                      '1': '✅ Available',
+                      '2': '❌ Failed',
+                      '3': '⚠️  Disabled'
+                    };
+                    formattedOutput += `   Availability: ${availMap[extServer.Avail] || extServer.Avail}\n`;
+                  }
+                  
+                  // Config sync for this member
+                  const memberSync = currentMember && currentMember.State === member.State;
+                  formattedOutput += `   Config Synced: ${memberSync ? '✅' : '⚠️  Pending'}\n`;
+                }
+                
+                formattedOutput += '\n';
+              });
+            } else {
+              formattedOutput += 'No member servers configured\n\n';
+            }
+            
+            // SUMMARY AND HEALTH ASSESSMENT
+            formattedOutput += `${'='.repeat(70)}\n`;
+            formattedOutput += `📊 HEALTH ASSESSMENT\n`;
+            formattedOutput += `${'='.repeat(70)}\n\n`;
+            
+            const totalMembers = memberServers.length;
+            const enabledMembers = memberServers.filter(m => m.State === 2).length;
+            const disabledMembers = memberServers.filter(m => m.State === 1).length;
+            
+            let availableMembers = 0;
+            let failedMembers = 0;
+            
+            memberServers.forEach(member => {
+              const extServer = extRealServers.find(ext => ext.Index === member.ServIndex);
+              if (extServer) {
+                if (extServer.Avail === 1) availableMembers++;
+                else if (extServer.Avail === 2) failedMembers++;
+              }
+            });
+            
+            formattedOutput += `Total Servers in Group: ${totalMembers}\n`;
+            formattedOutput += `Enabled: ${enabledMembers} | Disabled: ${disabledMembers}\n`;
+            
+            if (availableMembers + failedMembers > 0) {
+              formattedOutput += `Health Status: ${availableMembers} Available, ${failedMembers} Failed\n`;
+            }
+            
+            // Overall assessment
+            formattedOutput += `\n🎯 Group Status: `;
+            if (totalMembers === 0) {
+              formattedOutput += '⚠️  No members configured\n';
+            } else if (failedMembers > 0) {
+              formattedOutput += `⚠️  ${failedMembers} server(s) unhealthy\n`;
+            } else if (enabledMembers === 0) {
+              formattedOutput += '🔴 All servers disabled\n';
+            } else if (enabledMembers === totalMembers && availableMembers === totalMembers) {
+              formattedOutput += '✅ All servers healthy and operational\n';
+            } else {
+              formattedOutput += '🟡 Partial availability\n';
+            }
+            
+            // Configuration sync status
+            const groupSync = currentGroup && 
+              currentGroup.Metric === group.Metric &&
+              currentGroup.HealthID === group.HealthID;
+            
+            formattedOutput += `Configuration Status: ${groupSync ? '✅ Synced' : '⚠️  Changes pending apply'}\n`;
+          }
+        } else {
+          formattedOutput += 'No service group data available\n';
+        }
+        
+        return {
+          content: [
+            {
+              type: "text",
+              text: formattedOutput,
+            },
+          ],
+        };
+      }
+
+      case "get_ip_interfaces": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        const response = await client.get('/config/IpNewCfgIntfTable');
+        const interfaces = response.data.IpNewCfgIntfTable;
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🌐 LAYER 3 IP INTERFACES\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        if (interfaces && interfaces.length > 0) {
+          const targetIndex = args.interface_index as string | undefined;
+          const filteredInterfaces = targetIndex 
+            ? interfaces.filter((intf: any) => intf.Index.toString() === targetIndex)
+            : interfaces;
+          
+          filteredInterfaces.forEach((intf: any, idx: number) => {
+            formattedOutput += `Interface ${idx + 1}:\n`;
+            formattedOutput += `   Index: ${intf.Index}\n`;
+            formattedOutput += `   IP Address: ${intf.Addr}\n`;
+            formattedOutput += `   Subnet Mask: ${intf.Mask}\n`;
+            formattedOutput += `   VLAN: ${intf.Vlan}\n`;
+            
+            const stateMap: Record<string, string> = {
+              '1': '🔴 Disabled',
+              '2': '🟢 Enabled'
+            };
+            formattedOutput += `   State: ${stateMap[intf.State] || intf.State}\n`;
+            
+            if (intf.Description) {
+              formattedOutput += `   Description: ${intf.Description}\n`;
+            }
+            
+            const ipVerMap: Record<string, string> = {
+              '1': 'IPv4',
+              '2': 'IPv6',
+              '3': 'Both IPv4 and IPv6'
+            };
+            formattedOutput += `   IP Version: ${ipVerMap[intf.IpVer] || intf.IpVer}\n`;
+            
+            if (intf.Ipv6Addr && intf.Ipv6Addr !== '::' && intf.Ipv6Addr !== '0:0:0:0:0:0:0:0') {
+              formattedOutput += `   IPv6 Address: ${intf.Ipv6Addr}/${intf.PrefixLen}\n`;
+            }
+            
+            if (intf.Peer && intf.Peer !== '0.0.0.0') {
+              formattedOutput += `   Peer IP: ${intf.Peer}\n`;
+            }
+            
+            formattedOutput += `\n`;
+          });
+          
+          formattedOutput += `${'='.repeat(70)}\n`;
+          formattedOutput += `Total Interfaces: ${filteredInterfaces.length}\n`;
+        } else {
+          formattedOutput += 'No IP interfaces configured\n';
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_vlan_details": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        const response = await client.get('/config/VlanNewCfgTable');
+        const vlans = response.data.VlanNewCfgTable;
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🏷️  VLAN CONFIGURATION DETAILS\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        if (vlans && vlans.length > 0) {
+          const targetVlan = args.vlan_id as string | undefined;
+          const filteredVlans = targetVlan
+            ? vlans.filter((vlan: any) => vlan.VlanId.toString() === targetVlan)
+            : vlans;
+          
+          filteredVlans.forEach((vlan: any, idx: number) => {
+            formattedOutput += `VLAN ${idx + 1}:\n`;
+            formattedOutput += `   VLAN ID: ${vlan.VlanId}\n`;
+            formattedOutput += `   Name: ${vlan.VlanName}\n`;
+            
+            const stateMap: Record<string, string> = {
+              '1': '🔴 Disabled',
+              '2': '🟢 Enabled'
+            };
+            formattedOutput += `   State: ${stateMap[vlan.State] || vlan.State}\n`;
+            
+            // Port assignments
+            const ports = decodePortBitmask(vlan.Ports);
+            formattedOutput += `   Assigned Ports: ${ports.length > 0 ? `[${ports.join(', ')}]` : 'None'}\n`;
+            formattedOutput += `   Raw Port Mask: ${vlan.Ports}\n`;
+            
+            // MTU configuration
+            if (vlan.Mtu) {
+              const mtuMap: Record<string, string> = {
+                '1': 'Enabled',
+                '2': 'Disabled'
+              };
+              formattedOutput += `   MTU Override: ${mtuMap[vlan.Mtu] || vlan.Mtu}\n`;
+              if (vlan.MtuSize && vlan.Mtu === '1') {
+                formattedOutput += `   MTU Size: ${vlan.MtuSize} bytes\n`;
+              }
+            }
+            
+            // Jumbo frames
+            if (vlan.Jumbo) {
+              const jumboMap: Record<string, string> = {
+                '1': 'Enabled',
+                '2': 'Disabled'
+              };
+              formattedOutput += `   Jumbo Frames: ${jumboMap[vlan.Jumbo] || vlan.Jumbo}\n`;
+            }
+            
+            // MAC learning
+            if (vlan.Learn) {
+              const learnMap: Record<string, string> = {
+                '1': 'Enabled',
+                '2': 'Disabled'
+              };
+              formattedOutput += `   MAC Learning: ${learnMap[vlan.Learn] || vlan.Learn}\n`;
+            }
+            
+            // Spanning tree group
+            if (vlan.Stg && vlan.Stg !== '0') {
+              formattedOutput += `   Spanning Tree Group: ${vlan.Stg}\n`;
+            }
+            
+            // IPv6 configuration
+            if (vlan.Ipv6LlaGen) {
+              const ipv6GenMap: Record<string, string> = {
+                '1': 'Enabled',
+                '2': 'Disabled'
+              };
+              formattedOutput += `   IPv6 Link-Local Generation: ${ipv6GenMap[vlan.Ipv6LlaGen] || vlan.Ipv6LlaGen}\n`;
+            }
+            
+            if (vlan.RouterAdv) {
+              const raMap: Record<string, string> = {
+                '1': 'Enabled',
+                '2': 'Disabled'
+              };
+              formattedOutput += `   Router Advertisement: ${raMap[vlan.RouterAdv] || vlan.RouterAdv}\n`;
+            }
+            
+            formattedOutput += `\n`;
+          });
+          
+          formattedOutput += `${'='.repeat(70)}\n`;
+          formattedOutput += `Total VLANs: ${filteredVlans.length}\n`;
+        } else {
+          formattedOutput += 'No VLANs configured\n';
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_network_summary": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        // Get both IP interfaces and VLANs
+        const [ipResponse, vlanResponse] = await Promise.all([
+          client.get('/config/IpNewCfgIntfTable'),
+          client.get('/config/VlanNewCfgTable')
+        ]);
+        
+        const interfaces = ipResponse.data.IpNewCfgIntfTable;
+        const vlans = vlanResponse.data.VlanNewCfgTable;
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🌐 NETWORK TOPOLOGY SUMMARY\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        // Overview
+        formattedOutput += `📊 Overview:\n`;
+        formattedOutput += `   IP Interfaces: ${interfaces.length}\n`;
+        formattedOutput += `   VLANs: ${vlans.length}\n`;
+        formattedOutput += `\n`;
+        
+        // Group by VLAN
+        formattedOutput += `${'='.repeat(70)}\n`;
+        formattedOutput += `📋 VLAN-to-Interface Mapping:\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        vlans.forEach((vlan: any) => {
+          const vlanInterfaces = interfaces.filter((intf: any) => intf.Vlan === vlan.VlanId);
+          const ports = decodePortBitmask(vlan.Ports);
+          
+          formattedOutput += `VLAN ${vlan.VlanId}: ${vlan.VlanName}\n`;
+          formattedOutput += `   State: ${vlan.State === 2 ? '🟢 Enabled' : '🔴 Disabled'}\n`;
+          formattedOutput += `   Ports: ${ports.length > 0 ? `[${ports.join(', ')}]` : 'None'}\n`;
+          
+          if (vlanInterfaces.length > 0) {
+            formattedOutput += `   Layer 3 Interfaces (${vlanInterfaces.length}):\n`;
+            vlanInterfaces.forEach((intf: any) => {
+              formattedOutput += `      • ${intf.Addr}/${intf.Mask}`;
+              if (intf.Description) {
+                formattedOutput += ` (${intf.Description})`;
+              }
+              formattedOutput += `\n`;
+            });
+          } else {
+            formattedOutput += `   Layer 3 Interfaces: None (Layer 2 only)\n`;
+          }
+          formattedOutput += `\n`;
+        });
+        
+        // Orphan check - interfaces not in any VLAN
+        const vlanIds = vlans.map((v: any) => v.VlanId);
+        const orphanInterfaces = interfaces.filter((intf: any) => !vlanIds.includes(intf.Vlan));
+        
+        if (orphanInterfaces.length > 0) {
+          formattedOutput += `⚠️  Interfaces without matching VLAN:\n`;
+          orphanInterfaces.forEach((intf: any) => {
+            formattedOutput += `   • Interface ${intf.Index}: ${intf.Addr} (references VLAN ${intf.Vlan})\n`;
+          });
+          formattedOutput += `\n`;
+        }
+        
+        formattedOutput += `${'='.repeat(70)}\n`;
+        formattedOutput += `Summary: ${interfaces.length} L3 interfaces across ${vlans.length} VLANs\n`;
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_gateway_config": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        // Try to get gateway and static route tables
+        const [gwResponse, routeResponse] = await Promise.all([
+          client.get('/config/IpNewCfgGwTable').catch(() => null),
+          client.get('/config/IpNewCfgStaticRouteTable').catch(() => null)
+        ]);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🚪 GATEWAY AND ROUTING CONFIGURATION\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        let hasData = false;
+        
+        // Gateways
+        if (gwResponse && gwResponse.data.IpNewCfgGwTable) {
+          const gateways = gwResponse.data.IpNewCfgGwTable;
+          
+          if (Array.isArray(gateways) && gateways.length > 0) {
+            formattedOutput += `🌐 Configured Gateways:\n\n`;
+            gateways.forEach((gw: any, idx: number) => {
+              formattedOutput += `Gateway ${idx + 1}:\n`;
+              formattedOutput += `   Index: ${gw.Index}\n`;
+              formattedOutput += `   IP Address: ${gw.IpAddr}\n`;
+              if (gw.Vlan) formattedOutput += `   VLAN: ${gw.Vlan}\n`;
+              if (gw.Interval) formattedOutput += `   Health Check Interval: ${gw.Interval}s\n`;
+              if (gw.Retry) formattedOutput += `   Health Check Retries: ${gw.Retry}\n`;
+              if (gw.State) {
+                const stateMap: Record<string, string> = {
+                  '1': '🔴 Disabled',
+                  '2': '🟢 Enabled'
+                };
+                formattedOutput += `   State: ${stateMap[gw.State] || gw.State}\n`;
+              }
+              formattedOutput += `\n`;
+            });
+            hasData = true;
+          }
+        }
+        
+        // Static Routes
+        if (routeResponse && routeResponse.data.IpNewCfgStaticRouteTable) {
+          const routes = routeResponse.data.IpNewCfgStaticRouteTable;
+          
+          if (Array.isArray(routes) && routes.length > 0) {
+            formattedOutput += `🗺️  Static Routes:\n\n`;
+            routes.forEach((route: any, idx: number) => {
+              formattedOutput += `Route ${idx + 1}:\n`;
+              formattedOutput += `   Index: ${route.IndxStaticRouteIndx}\n`;
+              formattedOutput += `   Destination: ${route.DestIp}\n`;
+              formattedOutput += `   Subnet Mask: ${route.Mask}\n`;
+              formattedOutput += `   Gateway: ${route.Gateway}\n`;
+              if (route.Vlan) formattedOutput += `   VLAN: ${route.Vlan}\n`;
+              if (route.Interface) formattedOutput += `   Interface: ${route.Interface}\n`;
+              formattedOutput += `\n`;
+            });
+            hasData = true;
+          }
+        }
+        
+        if (!hasData) {
+          formattedOutput += `ℹ️  No gateways or static routes configured\n`;
+          formattedOutput += `\n`;
+          formattedOutput += `This is normal for:\n`;
+          formattedOutput += `   • Layer 2 only deployments\n`;
+          formattedOutput += `   • Devices using default routing\n`;
+          formattedOutput += `   • Configurations relying on VLAN interfaces only\n`;
+        }
+        
+        formattedOutput += `\n${'='.repeat(70)}\n`;
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "check_config_sync": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        // Compare New vs Current configurations
+        const [newServers, curServers, newGroups, curGroups, newVlans, curVlans] = await Promise.all([
+          client.get('/config/SlbNewCfgEnhRealServerTable'),
+          client.get('/config/SlbCurCfgEnhRealServerTable'),
+          client.get('/config/SlbNewCfgEnhGroupTable'),
+          client.get('/config/SlbCurCfgEnhGroupTable'),
+          client.get('/config/VlanNewCfgTable'),
+          client.get('/config/VlanCurCfgTable')
+        ]);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🔄 CONFIGURATION SYNCHRONIZATION STATUS\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        let hasChanges = false;
+        const changes: string[] = [];
+        
+        // Check real servers
+        const newServerArray = newServers.data.SlbNewCfgEnhRealServerTable;
+        const curServerArray = curServers.data.SlbCurCfgEnhRealServerTable;
+        
+        if (newServerArray.length !== curServerArray.length) {
+          hasChanges = true;
+          changes.push(`Real Servers: Count changed (${curServerArray.length} → ${newServerArray.length})`);
+        } else {
+          newServerArray.forEach((newSrv: any) => {
+            const curSrv = curServerArray.find((c: any) => c.Index === newSrv.Index);
+            if (curSrv) {
+              if (newSrv.State !== curSrv.State) {
+                hasChanges = true;
+                changes.push(`Server ${newSrv.Index} (${newSrv.IpAddr}): State changed`);
+              }
+              if (newSrv.Weight !== curSrv.Weight) {
+                hasChanges = true;
+                changes.push(`Server ${newSrv.Index} (${newSrv.IpAddr}): Weight ${curSrv.Weight} → ${newSrv.Weight}`);
+              }
+            }
+          });
+        }
+        
+        // Check service groups
+        const newGroupArray = newGroups.data.SlbNewCfgEnhGroupTable;
+        const curGroupArray = curGroups.data.SlbCurCfgEnhGroupTable;
+        
+        if (newGroupArray.length !== curGroupArray.length) {
+          hasChanges = true;
+          changes.push(`Service Groups: Count changed (${curGroupArray.length} → ${newGroupArray.length})`);
+        } else {
+          newGroupArray.forEach((newGrp: any) => {
+            const curGrp = curGroupArray.find((c: any) => c.Index === newGrp.Index);
+            if (curGrp) {
+              if (newGrp.Metric !== curGrp.Metric) {
+                hasChanges = true;
+                changes.push(`Group ${newGrp.Index}: Load balancing metric changed`);
+              }
+              if (newGrp.HealthID !== curGrp.HealthID) {
+                hasChanges = true;
+                changes.push(`Group ${newGrp.Index}: Health check changed`);
+              }
+            }
+          });
+        }
+        
+        // Check VLANs
+        const newVlanArray = newVlans.data.VlanNewCfgTable;
+        const curVlanArray = curVlans.data.VlanCurCfgTable;
+        
+        if (newVlanArray.length !== curVlanArray.length) {
+          hasChanges = true;
+          changes.push(`VLANs: Count changed (${curVlanArray.length} → ${newVlanArray.length})`);
+        }
+        
+        // Display results
+        if (hasChanges) {
+          formattedOutput += `⚠️  Configuration Status: PENDING CHANGES\n\n`;
+          formattedOutput += `📋 Detected Changes (${changes.length}):\n\n`;
+          changes.forEach((change, idx) => {
+            formattedOutput += `   ${idx + 1}. ${change}\n`;
+          });
+          formattedOutput += `\n`;
+          formattedOutput += `⚡ Action Required:\n`;
+          formattedOutput += `   • Apply changes: Use device management interface\n`;
+          formattedOutput += `   • Save to flash: Persist changes across reboots\n`;
+          formattedOutput += `   • Or revert: Discard pending changes\n`;
+        } else {
+          formattedOutput += `✅ Configuration Status: SYNCHRONIZED\n\n`;
+          formattedOutput += `All configurations are in sync between:\n`;
+          formattedOutput += `   • New (pending) configuration\n`;
+          formattedOutput += `   • Current (active) configuration\n\n`;
+          formattedOutput += `No pending changes detected.\n`;
+        }
+        
+        formattedOutput += `\n${'='.repeat(70)}\n`;
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "validate_server_config": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        const [servers, extServers] = await Promise.all([
+          client.get('/config/SlbNewCfgEnhRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerSecondPartTable').catch(() => ({ data: { SlbNewCfgEnhRealServerSecondPartTable: [] } }))
+        ]);
+        
+        const serverArray = servers.data.SlbNewCfgEnhRealServerTable;
+        const targetIndex = args.server_index as string | undefined;
+        const serversToValidate = targetIndex 
+          ? serverArray.filter((s: any) => s.Index.toString() === targetIndex)
+          : serverArray;
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `✅ REAL SERVER CONFIGURATION VALIDATION\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const issues: string[] = [];
+        const warnings: string[] = [];
+        const recommendations: string[] = [];
+        
+        // Check for duplicate IPs
+        const ipCounts = new Map<string, number>();
+        serverArray.forEach((srv: any) => {
+          ipCounts.set(srv.IpAddr, (ipCounts.get(srv.IpAddr) || 0) + 1);
+        });
+        ipCounts.forEach((count, ip) => {
+          if (count > 1) {
+            issues.push(`Duplicate IP address: ${ip} used by ${count} servers`);
+          }
+        });
+        
+        // Validate each server
+        serversToValidate.forEach((srv: any) => {
+          const serverLabel = `Server ${srv.Index} (${srv.IpAddr})`;
+          
+          // Check health check timeout
+          if (srv.TimeOut < 2) {
+            warnings.push(`${serverLabel}: Health check timeout too low (${srv.TimeOut}s)`);
+            recommendations.push(`${serverLabel}: Increase timeout to at least 2-3 seconds`);
+          }
+          
+          // Check weight
+          if (srv.Weight < 1) {
+            issues.push(`${serverLabel}: Invalid weight ${srv.Weight} (must be >= 1)`);
+          } else if (srv.Weight > 100) {
+            warnings.push(`${serverLabel}: Unusually high weight ${srv.Weight}`);
+          }
+          
+          // Check max connections
+          if (srv.MaxConns === 0) {
+            recommendations.push(`${serverLabel}: Unlimited connections - consider setting a limit`);
+          } else if (srv.MaxConns < 10) {
+            warnings.push(`${serverLabel}: Very low max connections (${srv.MaxConns})`);
+          }
+          
+          // Check state
+          if (srv.State !== 2) {
+            warnings.push(`${serverLabel}: Server is disabled (State=${srv.State})`);
+          }
+          
+          // Check ping interval
+          if (srv.PingInterval > 0 && srv.PingInterval < srv.TimeOut) {
+            issues.push(`${serverLabel}: Ping interval (${srv.PingInterval}s) < timeout (${srv.TimeOut}s)`);
+          }
+        });
+        
+        // Display results
+        formattedOutput += `Validated ${serversToValidate.length} server(s)\n\n`;
+        
+        if (issues.length > 0) {
+          formattedOutput += `🚨 Critical Issues (${issues.length}):\n`;
+          issues.forEach((issue, idx) => {
+            formattedOutput += `   ${idx + 1}. ${issue}\n`;
+          });
+          formattedOutput += `\n`;
+        }
+        
+        if (warnings.length > 0) {
+          formattedOutput += `⚠️  Warnings (${warnings.length}):\n`;
+          warnings.forEach((warning, idx) => {
+            formattedOutput += `   ${idx + 1}. ${warning}\n`;
+          });
+          formattedOutput += `\n`;
+        }
+        
+        if (recommendations.length > 0) {
+          formattedOutput += `💡 Recommendations (${recommendations.length}):\n`;
+          recommendations.forEach((rec, idx) => {
+            formattedOutput += `   ${idx + 1}. ${rec}\n`;
+          });
+          formattedOutput += `\n`;
+        }
+        
+        if (issues.length === 0 && warnings.length === 0) {
+          formattedOutput += `✅ No critical issues or warnings found!\n`;
+          formattedOutput += `Server configuration meets best practices.\n\n`;
+        }
+        
+        // Overall assessment
+        formattedOutput += `${'='.repeat(70)}\n`;
+        formattedOutput += `Overall Status: `;
+        if (issues.length > 0) {
+          formattedOutput += `❌ ACTION REQUIRED (${issues.length} critical issues)\n`;
+        } else if (warnings.length > 0) {
+          formattedOutput += `⚠️  REVIEW RECOMMENDED (${warnings.length} warnings)\n`;
+        } else {
+          formattedOutput += `✅ HEALTHY\n`;
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "validate_service_group": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        const [groups, members, servers, extServers] = await Promise.all([
+          client.get('/config/SlbNewCfgEnhGroupTable'),
+          client.get('/config/SlbNewCfgEnhGroupRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerTable'),
+          client.get('/config/SlbNewCfgEnhRealServerSecondPartTable').catch(() => ({ data: { SlbNewCfgEnhRealServerSecondPartTable: [] } }))
+        ]);
+        
+        const groupArray = groups.data.SlbNewCfgEnhGroupTable;
+        const memberArray = members.data.SlbNewCfgEnhGroupRealServerTable;
+        const serverArray = servers.data.SlbNewCfgEnhRealServerTable;
+        const extServerArray = extServers.data.SlbNewCfgEnhRealServerSecondPartTable || [];
+        
+        const targetGroup = args.group_index as string | undefined;
+        const groupsToValidate = targetGroup
+          ? groupArray.filter((g: any) => g.Index === targetGroup)
+          : groupArray;
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `✅ SERVICE GROUP CONFIGURATION VALIDATION\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const issues: string[] = [];
+        const warnings: string[] = [];
+        const recommendations: string[] = [];
+        
+        groupsToValidate.forEach((group: any) => {
+          const groupLabel = `Group ${group.Index}`;
+          const groupMembers = memberArray.filter((m: any) => m.RealServGroupIndex === group.Index);
+          
+          // Check for empty groups
+          if (groupMembers.length === 0) {
+            warnings.push(`${groupLabel}: No members configured (empty group)`);
+          } else {
+            // Check member availability
+            let enabledCount = 0;
+            let availableCount = 0;
+            
+            groupMembers.forEach((member: any) => {
+              if (member.State === 2) enabledCount++;
+              
+              const extSrv = extServerArray.find((e: any) => e.Index === member.ServIndex);
+              if (extSrv && extSrv.Avail === '1') availableCount++;
+            });
+            
+            if (enabledCount === 0) {
+              issues.push(`${groupLabel}: All members are disabled`);
+            } else if (enabledCount === 1) {
+              warnings.push(`${groupLabel}: Only 1 enabled member (no redundancy)`);
+            }
+            
+            if (availableCount === 0 && enabledCount > 0) {
+              issues.push(`${groupLabel}: All enabled members are unavailable/failed`);
+            }
+            
+            // Check weight distribution
+            const weights = groupMembers.map((m: any) => {
+              const srv = serverArray.find((s: any) => s.Index === m.ServIndex);
+              return srv ? srv.Weight : 1;
+            });
+            
+            const allSameWeight = weights.every((w: number) => w === weights[0]);
+            if (!allSameWeight && group.Metric === 2) {
+              recommendations.push(`${groupLabel}: Using Least Connections with uneven weights - verify intentional`);
+            }
+            
+            // Check health check configuration
+            if (!group.HealthID || group.HealthID === '') {
+              warnings.push(`${groupLabel}: No health check configured`);
+            }
+          }
+        });
+        
+        // Display results
+        formattedOutput += `Validated ${groupsToValidate.length} service group(s)\n\n`;
+        
+        if (issues.length > 0) {
+          formattedOutput += `🚨 Critical Issues (${issues.length}):\n`;
+          issues.forEach((issue, idx) => {
+            formattedOutput += `   ${idx + 1}. ${issue}\n`;
+          });
+          formattedOutput += `\n`;
+        }
+        
+        if (warnings.length > 0) {
+          formattedOutput += `⚠️  Warnings (${warnings.length}):\n`;
+          warnings.forEach((warning, idx) => {
+            formattedOutput += `   ${idx + 1}. ${warning}\n`;
+          });
+          formattedOutput += `\n`;
+        }
+        
+        if (recommendations.length > 0) {
+          formattedOutput += `💡 Recommendations (${recommendations.length}):\n`;
+          recommendations.forEach((rec, idx) => {
+            formattedOutput += `   ${idx + 1}. ${rec}\n`;
+          });
+          formattedOutput += `\n`;
+        }
+        
+        if (issues.length === 0 && warnings.length === 0) {
+          formattedOutput += `✅ No critical issues or warnings found!\n`;
+          formattedOutput += `Service group configuration is healthy.\n\n`;
+        }
+        
+        // Overall assessment
+        formattedOutput += `${'='.repeat(70)}\n`;
+        formattedOutput += `Overall Status: `;
+        if (issues.length > 0) {
+          formattedOutput += `❌ ACTION REQUIRED (${issues.length} critical issues)\n`;
+        } else if (warnings.length > 0) {
+          formattedOutput += `⚠️  REVIEW RECOMMENDED (${warnings.length} warnings)\n`;
+        } else {
+          formattedOutput += `✅ HEALTHY\n`;
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "generate_config_report": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const client = createAlteonClient(connection);
+        
+        // Gather comprehensive configuration data
+        const [sysInfo, vlans, interfaces, servers, groups, members, virtServers] = await Promise.all([
+          client.get('/config?prop=agSysName,agSysLocation,agSysContact,agSysRunningVer'),
+          client.get('/config/VlanNewCfgTable'),
+          client.get('/config/IpNewCfgIntfTable'),
+          client.get('/config/SlbNewCfgEnhRealServerTable'),
+          client.get('/config/SlbNewCfgEnhGroupTable'),
+          client.get('/config/SlbNewCfgEnhGroupRealServerTable'),
+          client.get('/config/SlbNewCfgEnhVirtServerTable').catch(() => ({ data: { SlbNewCfgEnhVirtServerTable: [] } }))
+        ]);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `📊 CONFIGURATION AUDIT REPORT\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        // System Info
+        formattedOutput += `🖥️  Device Information:\n`;
+        formattedOutput += `   Name: ${sysInfo.data.agSysName || 'N/A'}\n`;
+        formattedOutput += `   Location: ${sysInfo.data.agSysLocation || 'N/A'}\n`;
+        formattedOutput += `   Version: ${sysInfo.data.agSysRunningVer || 'N/A'}\n`;
+        formattedOutput += `   Report Generated: ${new Date().toISOString()}\n\n`;
+        
+        // Resource Summary
+        formattedOutput += `${'='.repeat(70)}\n`;
+        formattedOutput += `📦 Resource Utilization:\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const vlanCount = vlans.data.VlanNewCfgTable.length;
+        const interfaceCount = interfaces.data.IpNewCfgIntfTable.length;
+        const serverCount = servers.data.SlbNewCfgEnhRealServerTable.length;
+        const groupCount = groups.data.SlbNewCfgEnhGroupTable.length;
+        const virtServerCount = Array.isArray(virtServers.data.SlbNewCfgEnhVirtServerTable) 
+          ? virtServers.data.SlbNewCfgEnhVirtServerTable.length : 0;
+        
+        formattedOutput += `   VLANs Configured: ${vlanCount}\n`;
+        formattedOutput += `   IP Interfaces: ${interfaceCount}\n`;
+        formattedOutput += `   Real Servers: ${serverCount}\n`;
+        formattedOutput += `   Service Groups: ${groupCount}\n`;
+        formattedOutput += `   Virtual Servers: ${virtServerCount}\n\n`;
+        
+        // Health Summary
+        formattedOutput += `${'='.repeat(70)}\n`;
+        formattedOutput += `🏥 Configuration Health:\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const enabledServers = servers.data.SlbNewCfgEnhRealServerTable.filter((s: any) => s.State === 2).length;
+        const emptyGroups = groups.data.SlbNewCfgEnhGroupTable.filter((g: any) => {
+          return members.data.SlbNewCfgEnhGroupRealServerTable.filter((m: any) => m.RealServGroupIndex === g.Index).length === 0;
+        }).length;
+        
+        formattedOutput += `   Real Servers:\n`;
+        formattedOutput += `      Total: ${serverCount}\n`;
+        formattedOutput += `      Enabled: ${enabledServers}\n`;
+        formattedOutput += `      Disabled: ${serverCount - enabledServers}\n\n`;
+        
+        formattedOutput += `   Service Groups:\n`;
+        formattedOutput += `      Total: ${groupCount}\n`;
+        formattedOutput += `      With Members: ${groupCount - emptyGroups}\n`;
+        formattedOutput += `      Empty: ${emptyGroups}\n\n`;
+        
+        // Recommendations
+        formattedOutput += `${'='.repeat(70)}\n`;
+        formattedOutput += `💡 Recommendations:\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const recList: string[] = [];
+        
+        if (emptyGroups > 0) {
+          recList.push(`${emptyGroups} empty service group(s) - consider removing or adding members`);
+        }
+        if (serverCount - enabledServers > serverCount * 0.3) {
+          recList.push(`>30% of servers disabled - review if intentional`);
+        }
+        if (virtServerCount === 0 && serverCount > 0) {
+          recList.push(`Real servers configured but no virtual servers - incomplete setup?`);
+        }
+        if (interfaceCount < vlanCount * 0.5) {
+          recList.push(`Many VLANs without L3 interfaces - review network design`);
+        }
+        if (serverCount > 0 && groupCount === 0) {
+          recList.push(`Real servers exist but no service groups configured`);
+        }
+        
+        if (recList.length > 0) {
+          recList.forEach((rec, idx) => {
+            formattedOutput += `   ${idx + 1}. ${rec}\n`;
+          });
+        } else {
+          formattedOutput += `   ✅ Configuration appears well-structured\n`;
+        }
+        
+        formattedOutput += `\n${'='.repeat(70)}\n`;
+        formattedOutput += `Overall Assessment: `;
+        
+        if (recList.length === 0 && emptyGroups === 0) {
+          formattedOutput += `✅ HEALTHY - No significant issues detected\n`;
+        } else if (recList.length <= 2) {
+          formattedOutput += `⚠️  REVIEW RECOMMENDED - Minor improvements possible\n`;
+        } else {
+          formattedOutput += `🔍 ATTENTION NEEDED - Several areas for improvement\n`;
+        }
+        
+        formattedOutput += `\nReport Complete. Use specific validation tools for detailed analysis.\n`;
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
         };
       }
 

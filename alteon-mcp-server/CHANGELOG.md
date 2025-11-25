@@ -1,0 +1,89 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.6.0] - 2025-11-25
+
+### Added - Phase 4: Configuration Validation Tools
+- `check_config_sync` - Compare pending vs active configuration, detect unsaved changes
+- `validate_server_config` - Validate real server configurations for issues and best practices
+- `validate_service_group` - Validate service group configurations and member health
+- `generate_config_report` - Generate comprehensive audit reports with recommendations
+
+### Changed
+- Updated comprehensive test suite to cover all 18 tools (100% pass rate)
+- Enhanced professional documentation for NPM publication
+- Improved package.json metadata for discoverability
+
+### Fixed
+- Test suite compatibility across different Alteon firmware versions
+
+## [1.5.0] - 2025-11-25
+
+### Added - Phase 3: Network Topology Tools
+- `get_ip_interfaces` - Retrieve IP interface configurations
+- `get_vlan_details` - Get detailed VLAN information with port assignments
+- `get_network_summary` - Generate complete network topology overview
+- `get_gateway_config` - Retrieve gateway configurations
+
+### Changed
+- Updated README with Phase 3 tools documentation
+- Enhanced test coverage to 14 tools
+
+## [1.4.0] - 2025-11-25
+
+### Added
+- `get_health_check_status` - Comprehensive health check status for servers and groups
+
+### Changed
+- Improved error handling and validation
+- Enhanced documentation with usage examples
+
+## [1.3.0] - 2025-11-25
+
+### Added - Phase 2: Server & Group Management
+- `list_real_servers` - List all real servers with detailed configuration
+- `get_service_group_details` - Get service group details with member information
+
+### Changed
+- Refactored API client for better reusability
+- Updated test suite for new tools
+
+## [1.2.0] - 2025-11-25
+
+### Added
+- `get_traffic_stats` - Network traffic statistics per port
+- `check_device_status` - Overall device health summary
+
+### Fixed
+- Error handling for missing API endpoints
+- Timeout configuration for slow networks
+
+## [1.1.0] - 2025-11-25
+
+### Added
+- `get_system_health` - System health metrics (CPU, memory, disk, temperature)
+- `get_vlan_info` - VLAN configuration and status
+
+### Changed
+- Improved error messages for API failures
+- Enhanced documentation
+
+## [1.0.0] - 2025-11-25
+
+### Added - Initial Release
+- Core MCP server implementation
+- `get_real_server_status` - Real server monitoring
+- `get_service_group_status` - Service group monitoring
+- `get_virtual_service_status` - Virtual service monitoring
+- Basic test suite
+- README and documentation
+
+### Infrastructure
+- TypeScript build system
+- MCP SDK v0.5.0 integration
+- Axios-based REST API client
+- Environment-based configuration

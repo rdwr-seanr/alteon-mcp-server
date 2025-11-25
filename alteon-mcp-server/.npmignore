@@ -1,0 +1,22 @@
+# Exclude development and build files
+src/
+tsconfig.json
+*.ts
+*.mjs
+*.bat
+lm-studio-config.json
+
+# Build output is in dist/ which will be included
+# Documentation
+*.md
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# IDE and OS files
+.vscode/
+.DS_Store
+*.swp
+*.swo
+.idea/
