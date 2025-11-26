@@ -9,7 +9,7 @@ Professional Model Context Protocol (MCP) server for Radware Alteon Application 
 
 ## Features
 
-### 🎯 Comprehensive Tool Suite (26 Tools)
+### 🎯 Comprehensive Tool Suite (24 Tools)
 
 **Phase 1: Core Monitoring (7 tools)**
 - Real server status and health monitoring
@@ -37,19 +37,17 @@ Professional Model Context Protocol (MCP) server for Radware Alteon Application 
 - Service group validation
 - Comprehensive configuration audit reports
 
-**Phase 5: Runtime Statistics & Health Monitoring (8 tools)**
+**Phase 5: Runtime Statistics & Health Monitoring (6 tools)**
 - Virtual service detailed configuration
-- Virtual server runtime statistics
+- Virtual server runtime statistics  
 - Virtual service runtime statistics
 - Real server operational statistics
 - Real server operational info
 - Service group runtime statistics
-- Health check configuration
-- Health check results
 
 ### 🚀 Key Capabilities
 
-- ✅ **Production Ready**: Thoroughly tested with 92% pass rate (24/26 tools)
+- ✅ **Production Ready**: Thoroughly tested with 100% pass rate (24/24 tools)
 - ✅ **Safe Operations**: Read-only validation tools, no configuration changes
 - ✅ **AI-Powered**: Integrates with Claude, ChatGPT, and other MCP-compatible AI systems
 - ✅ **TypeScript**: Fully typed for reliability and maintainability
@@ -167,7 +165,7 @@ Verify your installation and connectivity:
 # Run comprehensive test suite
 npm test
 
-# Expected output: 24/26 tests passing (92% success rate)
+# Expected output: 24/24 tests passing (100% success rate)
 ```
 
 ### Example Outputs
@@ -235,8 +233,6 @@ Network Topology Summary:
 - `get_real_server_operational_stats` - Get real-time real server statistics
 - `get_real_server_operational_info` - Get real server operational info
 - `get_service_group_runtime_stats` - Get service group runtime statistics
-- `get_health_check_config` - Get health check configuration details
-- `get_health_check_results` - Get health check execution results
 
 ## Requirements
 
@@ -271,14 +267,14 @@ npm test
 
 Expected output:
 ```
-🎉 SUCCESS! 24/26 tools passed testing (92% success rate)!
+🎉 SUCCESS! All 24 tools are working perfectly!
 
 📋 Tool Categories:
    • Phase 1: 7 Core Monitoring Tools
    • Phase 2: 3 Server & Group Management Tools
    • Phase 3: 4 Network Topology Tools
    • Phase 4: 4 Configuration Validation Tools
-   • Phase 5: 8 Runtime Statistics & Health Monitoring Tools
+   • Phase 5: 6 Runtime Statistics & Health Monitoring Tools
 
 ✨ Ready for production deployment!
 ```
@@ -290,7 +286,7 @@ alteon-mcp-server/
 ├── src/
 │   └── index.ts          # Main MCP server implementation
 ├── dist/                 # Compiled JavaScript (npm package)
-├── test-all-26-tools.mjs # Comprehensive test suite
+├── test-all-24-tools.mjs # Comprehensive test suite
 ├── package.json          # NPM package configuration
 └── tsconfig.json         # TypeScript configuration
 ```
