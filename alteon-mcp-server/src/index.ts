@@ -7,7 +7,7 @@
  * Provides AI assistants with tools to query and manage Alteon devices via REST API.
  * 
  * @author SeanR <seanramati95@gmail.com>
- * @version 1.6.0
+ * @version 1.7.0
  * @license MIT
  */
 
@@ -95,7 +95,7 @@ const createAlteonClient = (connection: AlteonConnection) => {
 const server = new Server(
   {
     name: "alteon-mcp-server",
-    version: "1.6.0",
+    version: "1.7.0",
   },
   {
     capabilities: {
@@ -547,6 +547,218 @@ const tools: Tool[] = [
         password: {
           type: "string",
           description: "Password for authentication",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_virtual_service_details",
+    description: "Get detailed information about virtual services (ports/protocols) configured on a virtual server. Shows service-specific settings including port, protocol, service group binding, and service state.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        vs_index: {
+          type: "string",
+          description: "Virtual server index to get services for (required)",
+        },
+      },
+      required: ["ip", "username", "password", "vs_index"],
+    },
+  },
+  {
+    name: "get_virtual_server_runtime_stats",
+    description: "Get real-time operational statistics for virtual servers including current connections, bytes/packets processed, and current state. Uses /oper/ endpoints for live data.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        vs_index: {
+          type: "string",
+          description: "Specific virtual server index (optional, if not provided returns all)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_virtual_service_runtime_stats",
+    description: "Get real-time operational statistics for individual virtual services (per port/protocol on a VS). Shows per-service connections, throughput, and availability status.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        vs_index: {
+          type: "string",
+          description: "Virtual server index (required)",
+        },
+        service_index: {
+          type: "string",
+          description: "Service index/port (optional, if not provided returns all services for the VS)",
+        },
+      },
+      required: ["ip", "username", "password", "vs_index"],
+    },
+  },
+  {
+    name: "get_real_server_operational_stats",
+    description: "Get real-time operational statistics for real servers including current connections, bytes/packets processed, health check status, and operational state. Uses /oper/ endpoints for live monitoring data.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        server_index: {
+          type: "string",
+          description: "Specific real server index (optional, if not provided returns all)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_real_server_operational_info",
+    description: "Get operational state information for real servers including up/down status, health check results, last failure reason, and current weight being used.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        server_index: {
+          type: "string",
+          description: "Specific real server index (optional, if not provided returns all)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_service_group_runtime_stats",
+    description: "Get real-time operational statistics for service groups including total connections, throughput (bytes/packets), active server count, and load distribution. Uses /oper/ endpoints.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        group_index: {
+          type: "string",
+          description: "Specific service group index (optional, if not provided returns all)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_health_check_config",
+    description: "Get health check definitions and configuration including check type, interval, timeout, retry count, success/failure thresholds, and which servers/groups use each health check.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        health_check_id: {
+          type: "string",
+          description: "Specific health check ID (optional, if not provided returns all)",
+        },
+      },
+      required: ["ip", "username", "password"],
+    },
+  },
+  {
+    name: "get_health_check_results",
+    description: "Get current health check operational results including last check time, success/failure status, failure reasons, and health check state for all monitored servers.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ip: {
+          type: "string",
+          description: "IP address of the Alteon device",
+        },
+        username: {
+          type: "string",
+          description: "Username for authentication",
+        },
+        password: {
+          type: "string",
+          description: "Password for authentication",
+        },
+        server_id: {
+          type: "string",
+          description: "Specific server ID to get health check results for (optional, returns all if not provided)",
         },
       },
       required: ["ip", "username", "password"],
@@ -2575,6 +2787,381 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
         
         formattedOutput += `\nReport Complete. Use specific validation tools for detailed analysis.\n`;
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_virtual_service_details": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const vsIndex = args.vs_index as string;
+        const client = createAlteonClient(connection);
+        
+        const response = await client.get(`/config/SlbNewCfgEnhVirtServicesTable/${vsIndex}`);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🔌 VIRTUAL SERVICES FOR VS ${vsIndex}\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const services = Array.isArray(response.data.SlbNewCfgEnhVirtServicesTable) 
+          ? response.data.SlbNewCfgEnhVirtServicesTable 
+          : [response.data.SlbNewCfgEnhVirtServicesTable];
+        
+        if (services.length === 0) {
+          formattedOutput += `No services configured on this virtual server.\n`;
+        } else {
+          services.forEach((svc: any) => {
+            formattedOutput += `Service ${svc.ServIndex}:\n`;
+            formattedOutput += `   Port: ${svc.VirtPort}\n`;
+            formattedOutput += `   Protocol: ${svc.RealPort === 0 ? 'HTTP' : 'TCP/UDP'}\n`;
+            formattedOutput += `   Service Group: ${svc.RealGroup || 'None'}\n`;
+            formattedOutput += `   Session Timeout: ${svc.TimeOut || 'Default'}s\n`;
+            formattedOutput += `   Cookie Mode: ${svc.CookieMode === 1 ? 'Disabled' : svc.CookieMode === 2 ? 'Enabled' : 'Passive'}\n`;
+            formattedOutput += `   Direct Access Mode: ${svc.DirServerRtn === 1 ? 'Disabled' : 'Enabled'}\n`;
+            formattedOutput += `\n`;
+          });
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_virtual_server_runtime_stats": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const vsIndex = args.vs_index as string | undefined;
+        const client = createAlteonClient(connection);
+        
+        const endpoint = vsIndex 
+          ? `/oper/SlbVirtServerTable/${vsIndex}`
+          : `/oper/SlbVirtServerTable`;
+        
+        const response = await client.get(endpoint);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `📊 VIRTUAL SERVER RUNTIME STATISTICS\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const stats = Array.isArray(response.data.SlbVirtServerTable) 
+          ? response.data.SlbVirtServerTable 
+          : [response.data.SlbVirtServerTable];
+        
+        if (stats.length === 0) {
+          formattedOutput += `No runtime statistics available.\n`;
+        } else {
+          stats.forEach((vs: any) => {
+            formattedOutput += `Virtual Server ${vs.Index || 'N/A'}:\n`;
+            formattedOutput += `   Current Connections: ${vs.CurrSessions || 0}\n`;
+            formattedOutput += `   Total Connections: ${vs.TotalSessions || 0}\n`;
+            formattedOutput += `   Bytes In: ${vs.HCOctetsIn || 0}\n`;
+            formattedOutput += `   Bytes Out: ${vs.HCOctetsOut || 0}\n`;
+            formattedOutput += `   Packets In: ${vs.HCFramesIn || 0}\n`;
+            formattedOutput += `   Packets Out: ${vs.HCFramesOut || 0}\n`;
+            formattedOutput += `   Operational State: ${vs.State === 2 ? '🟢 Up' : vs.State === 3 ? '🔴 Down' : '⚪ Unknown'}\n`;
+            formattedOutput += `\n`;
+          });
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_virtual_service_runtime_stats": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const vsIndex = args.vs_index as string;
+        const serviceIndex = args.service_index as string | undefined;
+        const client = createAlteonClient(connection);
+        
+        const endpoint = serviceIndex
+          ? `/oper/SlbVirtServicesTable/${vsIndex}/${serviceIndex}`
+          : `/oper/SlbVirtServicesTable/${vsIndex}`;
+        
+        const response = await client.get(endpoint);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `📊 VIRTUAL SERVICE RUNTIME STATISTICS\n`;
+        formattedOutput += `   VS ${vsIndex}${serviceIndex ? ` / Service ${serviceIndex}` : ''}\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const stats = Array.isArray(response.data.SlbVirtServicesTable) 
+          ? response.data.SlbVirtServicesTable 
+          : [response.data.SlbVirtServicesTable];
+        
+        if (stats.length === 0) {
+          formattedOutput += `No runtime statistics available.\n`;
+        } else {
+          stats.forEach((svc: any) => {
+            formattedOutput += `Service ${svc.ServIndex || 'N/A'} (Port ${svc.VirtPort || 'N/A'}):\n`;
+            formattedOutput += `   Current Connections: ${svc.CurrSessions || 0}\n`;
+            formattedOutput += `   Total Connections: ${svc.TotalSessions || 0}\n`;
+            formattedOutput += `   Failed Connections: ${svc.FailedSessions || 0}\n`;
+            formattedOutput += `   Bytes In: ${svc.HCOctetsIn || 0}\n`;
+            formattedOutput += `   Bytes Out: ${svc.HCOctetsOut || 0}\n`;
+            formattedOutput += `   Availability: ${svc.Available === 1 ? '🟢 Available' : '🔴 Unavailable'}\n`;
+            formattedOutput += `\n`;
+          });
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_real_server_operational_stats": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const serverIndex = args.server_index as string | undefined;
+        const client = createAlteonClient(connection);
+        
+        const endpoint = serverIndex
+          ? `/oper/SlbRealServerTable/${serverIndex}`
+          : `/oper/SlbRealServerTable`;
+        
+        const response = await client.get(endpoint);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `📊 REAL SERVER OPERATIONAL STATISTICS\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const stats = Array.isArray(response.data.SlbRealServerTable) 
+          ? response.data.SlbRealServerTable 
+          : [response.data.SlbRealServerTable];
+        
+        if (stats.length === 0) {
+          formattedOutput += `No operational statistics available.\n`;
+        } else {
+          stats.forEach((srv: any) => {
+            formattedOutput += `Real Server ${srv.Index || 'N/A'} (${srv.IpAddr || 'N/A'}):\n`;
+            formattedOutput += `   Current Connections: ${srv.CurrSessions || 0}\n`;
+            formattedOutput += `   Total Connections: ${srv.TotalSessions || 0}\n`;
+            formattedOutput += `   Failed Connections: ${srv.FailedSessions || 0}\n`;
+            formattedOutput += `   Bytes In: ${srv.HCOctetsIn || 0}\n`;
+            formattedOutput += `   Bytes Out: ${srv.HCOctetsOut || 0}\n`;
+            formattedOutput += `   Packets In: ${srv.HCFramesIn || 0}\n`;
+            formattedOutput += `   Packets Out: ${srv.HCFramesOut || 0}\n`;
+            formattedOutput += `   Health Status: ${srv.Health === 1 ? '🟢 Healthy' : srv.Health === 2 ? '🔴 Failed' : '⚪ Unknown'}\n`;
+            formattedOutput += `\n`;
+          });
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_real_server_operational_info": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const serverIndex = args.server_index as string | undefined;
+        const client = createAlteonClient(connection);
+        
+        const endpoint = serverIndex
+          ? `/oper/SlbRealServerInfoTable/${serverIndex}`
+          : `/oper/SlbRealServerInfoTable`;
+        
+        const response = await client.get(endpoint);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `ℹ️  REAL SERVER OPERATIONAL INFO\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const info = Array.isArray(response.data.SlbRealServerInfoTable) 
+          ? response.data.SlbRealServerInfoTable 
+          : [response.data.SlbRealServerInfoTable];
+        
+        if (info.length === 0) {
+          formattedOutput += `No operational information available.\n`;
+        } else {
+          info.forEach((srv: any) => {
+            formattedOutput += `Real Server ${srv.Index || 'N/A'} (${srv.IpAddr || 'N/A'}):\n`;
+            formattedOutput += `   Operational State: ${srv.State === 1 ? '🔴 Down' : srv.State === 2 ? '🟢 Up' : srv.State === 3 ? '🟡 Warning' : srv.State === 4 ? '⚪ Shutdown' : 'Unknown'}\n`;
+            formattedOutput += `   Current Weight: ${srv.Weight || 'N/A'}\n`;
+            formattedOutput += `   Health Check Result: ${srv.HealthCheckResult === 1 ? '✅ Passed' : srv.HealthCheckResult === 2 ? '❌ Failed' : 'Unknown'}\n`;
+            formattedOutput += `   Last Failure Reason: ${srv.FailureReason || 'None'}\n`;
+            formattedOutput += `   Response Time: ${srv.ResponseTime || 0}ms\n`;
+            formattedOutput += `\n`;
+          });
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_service_group_runtime_stats": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const groupIndex = args.group_index as string | undefined;
+        const client = createAlteonClient(connection);
+        
+        const endpoint = groupIndex
+          ? `/oper/SlbGroupTable/${groupIndex}`
+          : `/oper/SlbGroupTable`;
+        
+        const response = await client.get(endpoint);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `📊 SERVICE GROUP RUNTIME STATISTICS\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const stats = Array.isArray(response.data.SlbGroupTable) 
+          ? response.data.SlbGroupTable 
+          : [response.data.SlbGroupTable];
+        
+        if (stats.length === 0) {
+          formattedOutput += `No runtime statistics available.\n`;
+        } else {
+          stats.forEach((grp: any) => {
+            formattedOutput += `Service Group ${grp.Index || 'N/A'} (${grp.Name || 'N/A'}):\n`;
+            formattedOutput += `   Current Connections: ${grp.CurrSessions || 0}\n`;
+            formattedOutput += `   Total Connections: ${grp.TotalSessions || 0}\n`;
+            formattedOutput += `   Bytes In: ${grp.HCOctetsIn || 0}\n`;
+            formattedOutput += `   Bytes Out: ${grp.HCOctetsOut || 0}\n`;
+            formattedOutput += `   Packets In: ${grp.HCFramesIn || 0}\n`;
+            formattedOutput += `   Packets Out: ${grp.HCFramesOut || 0}\n`;
+            formattedOutput += `   Active Servers: ${grp.ActiveServers || 0}\n`;
+            formattedOutput += `   Health Status: ${grp.Health === 1 ? '🟢 Healthy' : grp.Health === 2 ? '🔴 Failed' : '⚪ Unknown'}\n`;
+            formattedOutput += `\n`;
+          });
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_health_check_config": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const healthCheckId = args.health_check_id as string | undefined;
+        const client = createAlteonClient(connection);
+        
+        const endpoint = healthCheckId
+          ? `/config/SlbNewCfgEnhHealthCheckTable/${healthCheckId}`
+          : `/config/SlbNewCfgEnhHealthCheckTable`;
+        
+        const response = await client.get(endpoint);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🏥 HEALTH CHECK CONFIGURATION\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const checks = Array.isArray(response.data.SlbNewCfgEnhHealthCheckTable) 
+          ? response.data.SlbNewCfgEnhHealthCheckTable 
+          : [response.data.SlbNewCfgEnhHealthCheckTable];
+        
+        if (checks.length === 0) {
+          formattedOutput += `No health checks configured.\n`;
+        } else {
+          checks.forEach((hc: any) => {
+            const typeMap: Record<number, string> = {
+              1: 'ICMP (Ping)',
+              2: 'TCP',
+              3: 'HTTP',
+              4: 'HTTPS',
+              5: 'DNS',
+              6: 'SMTP',
+              7: 'POP3',
+              8: 'IMAP',
+              9: 'FTP',
+              10: 'LDAP',
+              11: 'RADIUS',
+              12: 'SIP',
+              13: 'WTS',
+              14: 'RTSP',
+              15: 'Script'
+            };
+            
+            formattedOutput += `Health Check ${hc.ID || 'N/A'} (${hc.Name || 'Unnamed'}):\n`;
+            formattedOutput += `   Type: ${typeMap[hc.DType] || `Unknown (${hc.DType})`}\n`;
+            formattedOutput += `   Interval: ${hc.Interval || 'N/A'}s\n`;
+            formattedOutput += `   Timeout: ${hc.Timeout || 'N/A'}s\n`;
+            formattedOutput += `   Retry Count: ${hc.Retries || 'N/A'}\n`;
+            formattedOutput += `   Success Threshold: ${hc.RestoreRetries || 'N/A'}\n`;
+            formattedOutput += `   Failure Threshold: ${hc.DownRetries || 'N/A'}\n`;
+            
+            if (hc.DType === 3 || hc.DType === 4) { // HTTP/HTTPS
+              formattedOutput += `   HTTP Method: ${hc.Method === 1 ? 'GET' : hc.Method === 2 ? 'POST' : hc.Method === 3 ? 'HEAD' : 'Unknown'}\n`;
+              formattedOutput += `   HTTP Path: ${hc.Path || '/'}\n`;
+              formattedOutput += `   Expected Status: ${hc.ResponseCode || '200'}\n`;
+            }
+            
+            formattedOutput += `\n`;
+          });
+        }
+        
+        return {
+          content: [{ type: "text", text: formattedOutput }],
+        };
+      }
+
+      case "get_health_check_results": {
+        const connection: AlteonConnection = {
+          ip: args.ip as string,
+          username: args.username as string,
+          password: args.password as string,
+        };
+        const serverId = args.server_id as string | undefined;
+        const client = createAlteonClient(connection);
+        
+        const endpoint = serverId
+          ? `/oper/SlbHealthCheckTable/${serverId}`
+          : `/oper/SlbHealthCheckTable`;
+        
+        const response = await client.get(endpoint);
+        
+        let formattedOutput = `${'='.repeat(70)}\n`;
+        formattedOutput += `🏥 HEALTH CHECK RESULTS\n`;
+        formattedOutput += `${'='.repeat(70)}\n\n`;
+        
+        const results = Array.isArray(response.data.SlbHealthCheckTable) 
+          ? response.data.SlbHealthCheckTable 
+          : [response.data.SlbHealthCheckTable];
+        
+        if (results.length === 0) {
+          formattedOutput += `No health check results available.\n`;
+        } else {
+          results.forEach((result: any) => {
+            formattedOutput += `Server ${result.ServerIndex || 'N/A'} - Health Check ${result.HealthCheckID || 'N/A'}:\n`;
+            formattedOutput += `   Status: ${result.Status === 1 ? '✅ Passed' : result.Status === 2 ? '❌ Failed' : result.Status === 3 ? '⏳ In Progress' : '⚪ Unknown'}\n`;
+            formattedOutput += `   Last Check Time: ${result.LastCheckTime || 'N/A'}\n`;
+            formattedOutput += `   Response Time: ${result.ResponseTime || 0}ms\n`;
+            formattedOutput += `   Failure Count: ${result.FailureCount || 0}\n`;
+            formattedOutput += `   Success Count: ${result.SuccessCount || 0}\n`;
+            
+            if (result.Status === 2 && result.FailureReason) {
+              formattedOutput += `   Failure Reason: ${result.FailureReason}\n`;
+            }
+            
+            formattedOutput += `\n`;
+          });
+        }
         
         return {
           content: [{ type: "text", text: formattedOutput }],
