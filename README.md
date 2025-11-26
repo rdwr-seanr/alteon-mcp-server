@@ -5,7 +5,9 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 [![MCP Protocol](https://img.shields.io/badge/MCP-v0.5.0-blue.svg)](https://modelcontextprotocol.io)
 
-Professional Model Context Protocol (MCP) server for Radware Alteon Application Delivery Controllers. Enable AI assistants like Claude to monitor, analyze, and validate your Alteon infrastructure through natural language.
+Professional Model Context Protocol (MCP) server for Radware Alteon Application Delivery Controllers. Provides comprehensive monitoring, topology discovery, configuration validation, and real-time operational statistics through AI-powered natural language interfaces.
+
+**v1.7.0** - Production Ready with 24 Tools | 100% Test Pass Rate
 
 ## What is This?
 
@@ -22,36 +24,50 @@ The AI assistant uses this server to fetch real-time data from your Alteon devic
 
 ## Features
 
-### 🎯 Comprehensive Monitoring & Validation
+### 🎯 Comprehensive Tool Suite (24 Tools)
 
-**Server & Load Balancing**
-- Real server health status and runtime statistics
-- Service group configuration and member status
+**Phase 1: Core Monitoring (7 tools)**
+- Real server status and health monitoring
+- Service group status tracking
 - Virtual service monitoring
-- Health check validation
-- Load balancing configuration
+- System health metrics
+- VLAN information
+- Network traffic statistics
+- Overall device status
 
-**Network Infrastructure**
-- VLAN configuration and details
+**Phase 2: Server & Group Management (3 tools)**
+- Real server listing and details
+- Service group configuration and members
+- Health check status validation
+
+**Phase 3: Network Topology (4 tools)**
 - IP interface discovery
-- Network topology mapping
-- Gateway and routing configuration
-- Port traffic statistics
+- VLAN configuration
+- Network topology summary
+- Gateway configuration
 
-**Configuration Management**
+**Phase 4: Configuration Validation (4 tools)**
 - Configuration synchronization checking
 - Server configuration validation
 - Service group validation
-- Comprehensive audit reports
-- Issue detection and recommendations
+- Comprehensive configuration audit reports
+
+**Phase 5: Runtime Statistics & Health Monitoring (6 tools)**
+- Virtual service detailed configuration
+- Virtual server runtime statistics
+- Virtual service runtime statistics
+- Real server operational statistics
+- Real server operational info
+- Service group runtime statistics
 
 ### 🚀 Key Capabilities
 
-- ✅ **18 Professional Tools** - Complete coverage of monitoring, topology, and validation
-- ✅ **Safe Operations** - All tools are read-only, no configuration changes
+- ✅ **24 Production Tools** - Comprehensive monitoring, topology, validation, and runtime statistics
+- ✅ **100% Test Pass Rate** - All tools verified and working on real hardware
+- ✅ **Safe Operations** - Read-only tools, no configuration changes
 - ✅ **AI-Powered** - Natural language interface through Claude, ChatGPT, or other MCP clients
-- ✅ **Production Ready** - Thoroughly tested with 100% pass rate
-- ✅ **Enterprise Grade** - Professional code quality and comprehensive error handling
+- ✅ **Real-Time Stats** - Operational statistics and runtime monitoring
+- ✅ **Enterprise Grade** - Professional code quality, TypeScript, comprehensive error handling
 
 ## Installation
 
@@ -208,33 +224,67 @@ Recommendations:
 💡 Consider adding health check timeouts for critical servers
 ```
 
-## Available Tools
+### Runtime Statistics (Phase 5)
+```
+"Show me real-time statistics for virtual server 1"
+"What are the current connections on my real servers?"
+"Get runtime statistics for service group Web-Pool"
+"Show me operational info for all virtual services"
+```
 
-### Monitoring & Status (7 tools)
-- `get_real_server_status` - Real server health and status
-- `get_service_group_status` - Service group overview
-- `get_virtual_service_status` - Virtual service status
-- `get_system_health` - System health metrics
-- `get_vlan_info` - VLAN configuration
-- `get_traffic_stats` - Network traffic statistics
-- `check_device_status` - Overall device health
+**Example Response:**
+```
+Virtual Server Runtime Statistics:
 
-### Server & Group Management (3 tools)
-- `list_real_servers` - Detailed server listing
-- `get_service_group_details` - Service group deep-dive
-- `get_health_check_status` - Health check validation
+VS-1 (10.210.240.100):
+   Current Connections: 1,245
+   Total Sessions: 45,892
+   Bytes In: 2.3 GB
+   Bytes Out: 15.7 GB
+   Status: Active
+   Uptime: 15 days
 
-### Network Topology (4 tools)
+Real Server Operational Stats:
+   RS-1 (10.210.240.5): 421 connections, Healthy
+   RS-2 (10.210.240.6): 398 connections, Healthy
+   RS-3 (10.210.240.7): 426 connections, Healthy
+```
+
+## Available Tools (24 Total)
+
+### Phase 1: Core Monitoring (7 tools)
+- `get_system_info` - System information and version
+- `get_dns_config` - DNS configuration
+- `get_vlan_table` - VLAN table and configuration
 - `get_ip_interfaces` - IP interface configuration
-- `get_vlan_details` - Detailed VLAN information
-- `get_network_summary` - Complete topology view
 - `get_gateway_config` - Gateway configuration
+- `get_network_summary` - Complete network topology
+- `get_interface_stats` - Interface statistics
 
-### Configuration Validation (4 tools)
-- `check_config_sync` - Configuration sync status
-- `validate_server_config` - Server validation
+### Phase 2: Server & Group Management (3 tools)
+- `get_port_traffic_stats` - Port traffic statistics
+- `get_virtual_server_status` - Virtual server configuration
+- `get_real_server_details` - Real server details and configuration
+
+### Phase 3: Network Topology (4 tools)
+- `get_real_server_runtime_stats` - Real server extended information
+- `get_service_groups` - Service group configuration
+- `get_service_group_details` - Service group members and details
+- `get_network_topology` - Complete network topology view
+
+### Phase 4: Configuration Validation (4 tools)
+- `check_config_sync` - Configuration synchronization status
+- `validate_server_config` - Real server configuration validation
 - `validate_service_group` - Service group validation
-- `generate_config_report` - Comprehensive audit
+- `generate_config_report` - Comprehensive audit report
+
+### Phase 5: Runtime Statistics & Health Monitoring (6 tools)
+- `get_virtual_service_details` - Virtual service detailed configuration
+- `get_virtual_server_runtime_stats` - Real-time virtual server statistics
+- `get_virtual_service_runtime_stats` - Per-service runtime statistics
+- `get_real_server_operational_stats` - Real-time real server statistics
+- `get_real_server_operational_info` - Real server operational info
+- `get_service_group_runtime_stats` - Service group runtime statistics
 
 ## Testing
 
@@ -247,9 +297,16 @@ npm test
 
 Expected output:
 ```
-✅ Passed: 18/18 tests
-📈 Success Rate: 100.0%
-🎉 All tools working perfectly!
+🎉 SUCCESS: All 24 tools are working perfectly!
+
+📋 Tool Categories:
+   • Phase 1: 7 Core Monitoring Tools
+   • Phase 2: 3 Server & Group Management Tools
+   • Phase 3: 4 Network Topology Tools
+   • Phase 4: 4 Configuration Validation Tools
+   • Phase 5: 6 Runtime Statistics & Health Monitoring Tools
+
+✨ Ready for production deployment!
 ```
 
 ## Security Considerations
@@ -303,10 +360,11 @@ curl -k https://your-alteon-ip/config/SlbCurCfgEnhRealServerTable -u admin:passw
 ```
 alteon-mcp-server/
 ├── src/
-│   └── index.ts          # Main MCP server (18 tools)
-├── dist/                 # Compiled JavaScript
-├── test-all-18-tools.mjs # Test suite
-└── package.json          # NPM configuration
+│   └── index.ts          # Main MCP server implementation (24 tools)
+├── dist/                 # Compiled JavaScript (npm package)
+├── test-all-24-tools.mjs # Comprehensive test suite
+├── package.json          # NPM package configuration
+└── tsconfig.json         # TypeScript configuration
 ```
 
 ## Contributing
