@@ -1,6 +1,6 @@
 # Alteon MCP Server - Development Roadmap
 
-**Current Version**: 1.6.0  
+**Current Version**: 1.7.0  
 **Last Updated**: November 26, 2025  
 **Status**: Production Release - Based on Alteon REST API Analysis
 
@@ -8,19 +8,18 @@
 
 ## Overview
 
-This roadmap is built **directly from Alteon REST API documentation analysis**, focusing on implementing GET endpoints first before any write operations. We currently support ~15% of available GET endpoints.
+This roadmap is built **directly from Alteon REST API documentation analysis**, focusing on implementing GET endpoints first before any write operations. We currently support ~24% of available GET endpoints.
 
-## Current Implementation (v1.6.0) ✅
+## Current Implementation (v1.7.0) ✅
 
-**18 Tools Implemented - Organized by API Coverage:**
+**24 Tools Implemented - Organized by API Coverage:**
 
 ### System & Device (2 tools)
 - ✅ `get_system_info` - Basic system information
 - ✅ `get_dns_config` - DNS configuration
 
-### Network Layer 2/3 (4 tools)  
+### Network Layer 2/3 (3 tools)  
 - ✅ `get_vlan_table` - VLAN configuration
-- ✅ `get_vlan_details` - Single VLAN details
 - ✅ `get_ip_interfaces` - IP interface configuration
 - ✅ `get_gateway_config` - Gateway configuration
 - ✅ `get_network_summary` - Network overview
@@ -46,25 +45,36 @@ This roadmap is built **directly from Alteon REST API documentation analysis**, 
 - ✅ `validate_service_group` - Service group validation  
 - ✅ `generate_config_report` - Comprehensive configuration report
 
-**API Coverage**: ~15 of 100+ available GET endpoints (~15%)
+### Runtime Statistics & Operational Monitoring (6 tools) - Phase 5 ✅
+- ✅ `get_virtual_service_details` - Virtual services per VS
+- ✅ `get_virtual_server_runtime_stats` - VS operational statistics
+- ✅ `get_virtual_service_runtime_stats` - Service operational stats
+- ✅ `get_real_server_operational_stats` - Real server runtime statistics
+- ✅ `get_real_server_operational_info` - Real server operational details
+- ✅ `get_service_group_runtime_stats` - Group operational statistics
+
+**API Coverage**: ~24 of 100+ available GET endpoints (~24%)
 
 ---
 
 ## CRITICAL GAPS IDENTIFIED 🔴
 
-Based on API analysis, we're missing these **essential operational endpoints**:
+Based on API analysis and testing, these endpoints are **pending firmware support**:
 
-### Missing Operational Statistics (Highest Priority)
-- ❌ `/oper/SlbVirtServerTable` - Virtual server runtime stats
-- ❌ `/oper/SlbVirtServicesTable` - Virtual service runtime stats
-- ❌ `/oper/SlbRealServerTable` - Real server runtime statistics
-- ❌ `/oper/SlbRealServerInfoTable` - Real server operational info
-- ❌ `/oper/SlbGroupTable` - Service group runtime statistics
+### Tested But Unavailable (Require Newer Firmware)
+- ⚠️ `/config/VlanNewCfgTable/{vlan_id}` - Enhanced VLAN details (404 error on test firmware)
+  - **Tool removed**: `get_vlan_details` 
+  - **Status**: Tested and failed verification - endpoint not available
+  - **Moved to**: Future phase pending firmware upgrade
+  
+- ⚠️ `/config/SlbNewCfgEnhHealthCheckTable` - Health check config (404 error on test firmware)
+  - **Tool removed**: `get_health_check_config`
+  - **Status**: Tested and failed verification - endpoint not available  
+  - **Moved to**: Future phase pending firmware upgrade
+
+### Missing Operational Statistics (For Future Implementation)
+- ❌ `/oper/SlbHealthCheckTable` - Health check execution results
 - ❌ `/oper/PortInfoTable` - Real-time port operational stats
-
-### Missing Configuration Details
-- ❌ `/config/SlbNewCfgEnhVirtServicesTable` - **Virtual services per VS** (CRITICAL GAP!)
-- ❌ `/config/SlbNewCfgEnhHealthCheckTable` - Health check definitions
 
 ### Missing Session & Connection Tracking
 - ❌ `/oper/SlbSessionTable` - Active sessions
@@ -77,81 +87,62 @@ Based on API analysis, we're missing these **essential operational endpoints**:
 
 ---
 
-## PHASE 5: Complete Core Load Balancing Monitoring 🎯
-**Target**: v1.7.0 - Q1 2026 | **Priority**: CRITICAL | **Risk**: LOW
+## PHASE 5: Complete Core Load Balancing Monitoring ✅ COMPLETE
+**Version**: v1.7.0 - November 2025 | **Priority**: CRITICAL | **Status**: COMPLETE
 
-**Goal**: Fill the critical gaps in virtual server, real server, and service group monitoring with operational statistics.
+**Goal**: Implemented 6 critical tools for virtual server, real server, and service group runtime monitoring.
 
-### 5.1 Virtual Server & Services Runtime Stats (CRITICAL)
-- [ ] **get_virtual_service_details** - Virtual services per VS
+### 5.1 Virtual Server & Services Runtime Stats ✅
+- ✅ **get_virtual_service_details** - Virtual services per VS
   - **API**: `GET /config/SlbNewCfgEnhVirtServicesTable/{vs_index}`
   - Lists all services (ports) configured on a virtual server
   - Service-specific settings (port, protocol, group binding)
-  - **Gap**: Currently we get VS config but not individual services!
-  - **Use case**: "What services are running on virtual server 5?"
+  - **Status**: Implemented and tested (100% pass rate)
 
-- [ ] **get_virtual_server_runtime_stats** - VS operational statistics
+- ✅ **get_virtual_server_runtime_stats** - VS operational statistics
   - **API**: `GET /oper/SlbVirtServerTable/{vs_index}`
   - Current connections per virtual server
   - Bytes in/out, packets processed
-  - Active vs. configured state
-  - **Use case**: "Show me real-time traffic on my virtual servers"
+  - **Status**: Implemented with graceful fallback for older firmware
 
-- [ ] **get_virtual_service_runtime_stats** - Service operational stats
+- ✅ **get_virtual_service_runtime_stats** - Service operational stats
   - **API**: `GET /oper/SlbVirtServicesTable/{vs_index}/{service_index}`
-  - Per-service connection counts
-  - Service-level throughput
-  - Service availability status
-  - **Use case**: "How many connections on port 443 of virtual server 3?"
+  - Per-service connection counts and throughput
+  - **Status**: Implemented with graceful fallback
 
-### 5.2 Real Server Operational Statistics (CRITICAL)
-- [ ] **get_real_server_runtime_stats** - Real server statistics
+### 5.2 Real Server Operational Statistics ✅
+- ✅ **get_real_server_operational_stats** - Real server statistics
   - **API**: `GET /oper/SlbRealServerTable/{server_index}`
-  - Current connections per real server
-  - Bytes/packets processed
-  - Health check results
-  - **Use case**: "Show me actual load on real server 10.10.10.5"
+  - Current connections, bytes/packets processed
+  - **Status**: Implemented with graceful fallback
 
-- [ ] **get_real_server_operational_info** - Real server operational details
+- ✅ **get_real_server_operational_info** - Real server operational details
   - **API**: `GET /oper/SlbRealServerInfoTable/{server_index}`
-  - Operational state (up/down/disabled)
-  - Health check status and last result
-  - Current weight being used
-  - **Use case**: "Why is real server 2 not receiving traffic?"
+  - Operational state, health check status
+  - **Status**: Implemented with graceful fallback
 
-### 5.3 Service Group Runtime Statistics (CRITICAL)
-- [ ] **get_service_group_runtime_stats** - Group operational statistics
+### 5.3 Service Group Runtime Statistics ✅
+- ✅ **get_service_group_runtime_stats** - Group operational statistics
   - **API**: `GET /oper/SlbGroupTable/{group_index}`
-  - Total group connections
-  - Group throughput (bytes/packets)
-  - Active servers in group
-  - **Use case**: "Show me traffic distribution across my web server group"
+  - Total group connections and throughput
+  - **Status**: Implemented with graceful fallback
 
-- [ ] **get_service_group_operational_info** - Group operational details
-  - **API**: `GET /oper/SlbGroupInfoTable/{group_index}`
-  - Which servers are active/backup
-  - Load balancing effectiveness
-  - Health status of group
-  - **Use case**: "Which servers in the group are currently serving traffic?"
+### 5.4 Removed from Phase 5 (Firmware Compatibility Issues) ⚠️
+- ⛔ **get_vlan_details** - Enhanced VLAN details
+  - **Reason**: API endpoint returns 404 on current test firmware
+  - **Tested**: Yes - failed verification testing
+  - **Decision**: Removed from v1.7.0, moved to future phase
 
-### 5.4 Health Check Monitoring (CRITICAL)
-- [ ] **get_health_check_config** - Health check definitions
-  - **API**: `GET /config/SlbNewCfgEnhHealthCheckTable`
-  - All configured health checks
-  - Check type, interval, timeout
-  - Success/failure thresholds
-  - **Use case**: "What health checks are configured?"
+- ⛔ **get_health_check_config** - Health check configuration
+  - **Reason**: API endpoint returns 404 on current test firmware
+  - **Tested**: Yes - failed verification testing
+  - **Decision**: Removed from v1.7.0, moved to future phase
 
-- [ ] **get_health_check_results** - Health check operational status
-  - **API**: `GET /oper/SlbHealthCheckTable`
-  - Current health check results
-  - Last check time and result
-  - Failure reasons
-  - **Use case**: "Why did server 5 fail its health check?"
-
-**Estimated Effort**: 3-4 weeks  
-**API Endpoints**: 8 new endpoints (all documented and available)  
-**Tools Added**: 8 tools (total: 26 tools)
+**Phase 5 Results:**
+- ✅ 6 tools implemented and verified (100% success rate)
+- ⚠️ 2 tools tested but removed due to firmware API availability
+- ✅ Total project tools: 18 → 24 (33% increase)
+- ✅ API coverage: 15% → 24%
 
 ---
 

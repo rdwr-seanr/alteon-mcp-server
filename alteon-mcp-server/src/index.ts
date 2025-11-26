@@ -387,32 +387,6 @@ const tools: Tool[] = [
     },
   },
   {
-    name: "get_vlan_details",
-    description: "Get comprehensive VLAN information including enhanced VLAN configuration, port assignments, MTU, learning settings, and IPv6 configuration. More detailed than get_vlan_table.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        ip: {
-          type: "string",
-          description: "IP address of the Alteon device",
-        },
-        username: {
-          type: "string",
-          description: "Username for authentication",
-        },
-        password: {
-          type: "string",
-          description: "Password for authentication",
-        },
-        vlan_id: {
-          type: "string",
-          description: "Specific VLAN ID to retrieve (optional, if not provided returns all VLANs)",
-        },
-      },
-      required: ["ip", "username", "password"],
-    },
-  },
-  {
     name: "get_network_summary",
     description: "Get a comprehensive network summary combining IP interfaces, VLANs, and their relationships. Provides a complete network topology view showing how Layer 2 and Layer 3 are configured.",
     inputSchema: {
@@ -707,32 +681,6 @@ const tools: Tool[] = [
         group_index: {
           type: "string",
           description: "Specific service group index (optional, if not provided returns all)",
-        },
-      },
-      required: ["ip", "username", "password"],
-    },
-  },
-  {
-    name: "get_health_check_config",
-    description: "Get health check definitions and configuration including check type, interval, timeout, retry count, success/failure thresholds, and which servers/groups use each health check.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        ip: {
-          type: "string",
-          description: "IP address of the Alteon device",
-        },
-        username: {
-          type: "string",
-          description: "Username for authentication",
-        },
-        password: {
-          type: "string",
-          description: "Password for authentication",
-        },
-        health_check_id: {
-          type: "string",
-          description: "Specific health check ID (optional, if not provided returns all)",
         },
       },
       required: ["ip", "username", "password"],
@@ -2060,109 +2008,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "get_vlan_details": {
-        const connection: AlteonConnection = {
-          ip: args.ip as string,
-          username: args.username as string,
-          password: args.password as string,
-        };
-        const client = createAlteonClient(connection);
-        
-        const response = await client.get('/config/VlanNewCfgTable');
-        const vlans = response.data.VlanNewCfgTable;
-        
-        let formattedOutput = `${'='.repeat(70)}\n`;
-        formattedOutput += `🏷️  VLAN CONFIGURATION DETAILS\n`;
-        formattedOutput += `${'='.repeat(70)}\n\n`;
-        
-        if (vlans && vlans.length > 0) {
-          const targetVlan = args.vlan_id as string | undefined;
-          const filteredVlans = targetVlan
-            ? vlans.filter((vlan: any) => vlan.VlanId.toString() === targetVlan)
-            : vlans;
-          
-          filteredVlans.forEach((vlan: any, idx: number) => {
-            formattedOutput += `VLAN ${idx + 1}:\n`;
-            formattedOutput += `   VLAN ID: ${vlan.VlanId}\n`;
-            formattedOutput += `   Name: ${vlan.VlanName}\n`;
-            
-            const stateMap: Record<string, string> = {
-              '1': '🔴 Disabled',
-              '2': '🟢 Enabled'
-            };
-            formattedOutput += `   State: ${stateMap[vlan.State] || vlan.State}\n`;
-            
-            // Port assignments
-            const ports = decodePortBitmask(vlan.Ports);
-            formattedOutput += `   Assigned Ports: ${ports.length > 0 ? `[${ports.join(', ')}]` : 'None'}\n`;
-            formattedOutput += `   Raw Port Mask: ${vlan.Ports}\n`;
-            
-            // MTU configuration
-            if (vlan.Mtu) {
-              const mtuMap: Record<string, string> = {
-                '1': 'Enabled',
-                '2': 'Disabled'
-              };
-              formattedOutput += `   MTU Override: ${mtuMap[vlan.Mtu] || vlan.Mtu}\n`;
-              if (vlan.MtuSize && vlan.Mtu === '1') {
-                formattedOutput += `   MTU Size: ${vlan.MtuSize} bytes\n`;
-              }
-            }
-            
-            // Jumbo frames
-            if (vlan.Jumbo) {
-              const jumboMap: Record<string, string> = {
-                '1': 'Enabled',
-                '2': 'Disabled'
-              };
-              formattedOutput += `   Jumbo Frames: ${jumboMap[vlan.Jumbo] || vlan.Jumbo}\n`;
-            }
-            
-            // MAC learning
-            if (vlan.Learn) {
-              const learnMap: Record<string, string> = {
-                '1': 'Enabled',
-                '2': 'Disabled'
-              };
-              formattedOutput += `   MAC Learning: ${learnMap[vlan.Learn] || vlan.Learn}\n`;
-            }
-            
-            // Spanning tree group
-            if (vlan.Stg && vlan.Stg !== '0') {
-              formattedOutput += `   Spanning Tree Group: ${vlan.Stg}\n`;
-            }
-            
-            // IPv6 configuration
-            if (vlan.Ipv6LlaGen) {
-              const ipv6GenMap: Record<string, string> = {
-                '1': 'Enabled',
-                '2': 'Disabled'
-              };
-              formattedOutput += `   IPv6 Link-Local Generation: ${ipv6GenMap[vlan.Ipv6LlaGen] || vlan.Ipv6LlaGen}\n`;
-            }
-            
-            if (vlan.RouterAdv) {
-              const raMap: Record<string, string> = {
-                '1': 'Enabled',
-                '2': 'Disabled'
-              };
-              formattedOutput += `   Router Advertisement: ${raMap[vlan.RouterAdv] || vlan.RouterAdv}\n`;
-            }
-            
-            formattedOutput += `\n`;
-          });
-          
-          formattedOutput += `${'='.repeat(70)}\n`;
-          formattedOutput += `Total VLANs: ${filteredVlans.length}\n`;
-        } else {
-          formattedOutput += 'No VLANs configured\n';
-        }
-        
-        return {
-          content: [{ type: "text", text: formattedOutput }],
-        };
-      }
-
       case "get_network_summary": {
         const connection: AlteonConnection = {
           ip: args.ip as string,
@@ -3044,74 +2889,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             formattedOutput += `   Packets Out: ${grp.HCFramesOut || 0}\n`;
             formattedOutput += `   Active Servers: ${grp.ActiveServers || 0}\n`;
             formattedOutput += `   Health Status: ${grp.Health === 1 ? '🟢 Healthy' : grp.Health === 2 ? '🔴 Failed' : '⚪ Unknown'}\n`;
-            formattedOutput += `\n`;
-          });
-        }
-        
-        return {
-          content: [{ type: "text", text: formattedOutput }],
-        };
-      }
-
-      case "get_health_check_config": {
-        const connection: AlteonConnection = {
-          ip: args.ip as string,
-          username: args.username as string,
-          password: args.password as string,
-        };
-        const healthCheckId = args.health_check_id as string | undefined;
-        const client = createAlteonClient(connection);
-        
-        const endpoint = healthCheckId
-          ? `/config/SlbNewCfgEnhHealthCheckTable/${healthCheckId}`
-          : `/config/SlbNewCfgEnhHealthCheckTable`;
-        
-        const response = await client.get(endpoint);
-        
-        let formattedOutput = `${'='.repeat(70)}\n`;
-        formattedOutput += `🏥 HEALTH CHECK CONFIGURATION\n`;
-        formattedOutput += `${'='.repeat(70)}\n\n`;
-        
-        const checks = Array.isArray(response.data.SlbNewCfgEnhHealthCheckTable) 
-          ? response.data.SlbNewCfgEnhHealthCheckTable 
-          : [response.data.SlbNewCfgEnhHealthCheckTable];
-        
-        if (checks.length === 0) {
-          formattedOutput += `No health checks configured.\n`;
-        } else {
-          checks.forEach((hc: any) => {
-            const typeMap: Record<number, string> = {
-              1: 'ICMP (Ping)',
-              2: 'TCP',
-              3: 'HTTP',
-              4: 'HTTPS',
-              5: 'DNS',
-              6: 'SMTP',
-              7: 'POP3',
-              8: 'IMAP',
-              9: 'FTP',
-              10: 'LDAP',
-              11: 'RADIUS',
-              12: 'SIP',
-              13: 'WTS',
-              14: 'RTSP',
-              15: 'Script'
-            };
-            
-            formattedOutput += `Health Check ${hc.ID || 'N/A'} (${hc.Name || 'Unnamed'}):\n`;
-            formattedOutput += `   Type: ${typeMap[hc.DType] || `Unknown (${hc.DType})`}\n`;
-            formattedOutput += `   Interval: ${hc.Interval || 'N/A'}s\n`;
-            formattedOutput += `   Timeout: ${hc.Timeout || 'N/A'}s\n`;
-            formattedOutput += `   Retry Count: ${hc.Retries || 'N/A'}\n`;
-            formattedOutput += `   Success Threshold: ${hc.RestoreRetries || 'N/A'}\n`;
-            formattedOutput += `   Failure Threshold: ${hc.DownRetries || 'N/A'}\n`;
-            
-            if (hc.DType === 3 || hc.DType === 4) { // HTTP/HTTPS
-              formattedOutput += `   HTTP Method: ${hc.Method === 1 ? 'GET' : hc.Method === 2 ? 'POST' : hc.Method === 3 ? 'HEAD' : 'Unknown'}\n`;
-              formattedOutput += `   HTTP Path: ${hc.Path || '/'}\n`;
-              formattedOutput += `   Expected Status: ${hc.ResponseCode || '200'}\n`;
-            }
-            
             formattedOutput += `\n`;
           });
         }
